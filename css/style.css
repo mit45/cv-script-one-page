@@ -25,21 +25,8 @@ body {
     margin-right: auto;
 }
 
-/* @media only screen and (max-width: 1000px) {
-    .social {
-        text-align: center;
-    }
-    .container{
-        text-align: center;
-        margin-top: 0px;
-    }
-    .header-navbar{
-        flex-direction: column;
-    }
-    .header-text{
-        width: 80%;
-    }
-}
+/* 
+
 
 @media only screen and (max-width: 700px){
     ul{

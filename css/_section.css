@@ -69,3 +69,41 @@ section {
 .jobs h3 strong {
     padding-left: 5px;
 }
+
+@media only screen and (max-width: 485px) {
+
+    /* Section */
+    section {
+        flex-direction: column;
+    }
+
+    .section-menü {
+        align-items: center;
+        box-shadow: 1px 1px 10px;
+        margin-bottom: 20px;
+    }
+
+    .section-menü a {
+        margin-top: 20px;
+    }
+
+    .aciklama h3 {
+        padding-bottom: 5px;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .aciklama-jobs {
+        flex-direction: column;
+    }
+
+    .aciklama-jobs p {
+        text-align: left;
+    }
+
+    .jobs {
+        width: 100%;
+        opacity: 0.8;
+        margin-bottom: 5px;
+        border-radius: 10px;
+    }
+}
