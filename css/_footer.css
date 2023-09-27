@@ -11,3 +11,10 @@ footer {
     display: flex;
     gap: 20px;
 }
+
+@media only screen and (max-width: 485px) {
+    footer {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+}
