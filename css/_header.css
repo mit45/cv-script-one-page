@@ -1,0 +1,32 @@
+/* Header */
+header {
+    height: 12vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 35px;
+    letter-spacing: 10px;
+    font-family: 'WindSong', cursive;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    padding: 10px;
+    border: 2px dashed;
+    border-radius: 10px;
+    border-color: white;
+}
+
+nav a:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
