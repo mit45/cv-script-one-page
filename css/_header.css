@@ -18,7 +18,7 @@ header {
     width: 150px;
 }
 
-nav {
+/* nav {
     display: flex;
     gap: 20px;
 }
@@ -33,11 +33,11 @@ nav a {
 nav a:hover {
     opacity: 0.5;
     cursor: pointer;
-}
+} */
 
 @media only screen and (max-width: 485px) {
     header {
-        height: 21vh;
+        height: 15vh;
         display: flex;
         flex-direction: column;
     }
@@ -52,7 +52,7 @@ nav a:hover {
 
     .logo img {
         width: 100px;
-    }
+    }/* 
 
     nav {
         display: flex;
@@ -69,6 +69,6 @@ nav a:hover {
     nav a:hover {
         opacity: 0.5;
         cursor: pointer;
-    }
+    } */
 
 }
