@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kura Ayarları</title>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+
+    <link rel="stylesheet" href="css/reset.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/draw.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="img/logo.png" alt="logo" width="150px">
+                <h1>Admin Panel</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fa-solid fa-home"></i> Anasayfa</a>
+                <a href="draw.html"><i class="fa-solid fa-gift"></i> Kura Sayfası</a>
+            </nav>
+        </header>
+
+        <section class="admin-section">
+            <!-- Admin Login -->
+            <div class="admin-container" id="adminLoginSection">
+                <h2>Admin Girişi</h2>
+                <div class="admin-form">
+                    <div class="form-group">
+                        <label for="adminPassword">Admin Şifresi:</label>
+                        <input type="password" id="adminPassword" placeholder="Admin şifresini girin" required>
+                    </div>
+                    <button onclick="adminLogin()" class="btn-primary">Giriş Yap</button>
+                    <div id="adminLoginMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div class="admin-container" id="adminPanelSection" style="display: none;">
+                <h2>Kura Listesi Yönetimi</h2>
+                
+                <!-- Add Participant -->
+                <div class="admin-box">
+                    <h3><i class="fa-solid fa-user-plus"></i> Katılımcı Ekle</h3>
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label for="participantName">Ad Soyad:</label>
+                            <input type="text" id="participantName" placeholder="Katılımcı adı" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="participantPassword">Şifre:</label>
+                            <input type="password" id="participantPassword" placeholder="Katılımcı şifresi" required>
+                        </div>
+                        <button onclick="addParticipant()" class="btn-success">
+                            <i class="fa-solid fa-plus"></i> Ekle
+                        </button>
+                    </div>
+                    <div id="addMessage" class="message"></div>
+                </div>
+
+                <!-- Participants List -->
+                <div class="admin-box">
+                    <h3><i class="fa-solid fa-users"></i> Katılımcı Listesi</h3>
+                    <div class="participants-stats">
+                        <div class="stat-box">
+                            <span class="stat-label">Toplam Katılımcı:</span>
+                            <span id="totalParticipants" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Kura Çekenler:</span>
+                            <span id="drawnParticipants" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="participants-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ad Soyad</th>
+                                    <th>Şifre</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="participantsList">
+                                <!-- Dinamik olarak doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Draw Results -->
+                <div class="admin-box">
+                    <h3><i class="fa-solid fa-gift"></i> Kura Sonuçları</h3>
+                    <div class="table-container">
+                        <table class="participants-table">
+                            <thead>
+                                <tr>
+                                    <th>Kişi</th>
+                                    <th>Seçtiği Numara</th>
+                                    <th>Hediye Alacağı Kişi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="drawResultsList">
+                                <!-- Dinamik olarak doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- System Controls -->
+                <div class="admin-box">
+                    <h3><i class="fa-solid fa-tools"></i> Sistem Kontrolleri</h3>
+                    <div class="control-buttons">
+                        <button onclick="resetAllDraws()" class="btn-warning">
+                            <i class="fa-solid fa-rotate-left"></i> Tüm Kuraları Sıfırla
+                        </button>
+                        <button onclick="clearAllData()" class="btn-danger">
+                            <i class="fa-solid fa-trash"></i> Tüm Verileri Sil
+                        </button>
+                        <button onclick="exportData()" class="btn-info">
+                            <i class="fa-solid fa-download"></i> Verileri İndir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer">
+                <p>&copy; 2025 Yılbaşı Kura Çekilişi - Admin Panel. Tüm Hakları Saklıdır.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/draw.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

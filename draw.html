@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yılbaşı Kura Çekilişi</title>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+
+    <link rel="stylesheet" href="css/reset.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/draw.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="img/logo.png" alt="logo" width="150px">
+                <h1>Yılbaşı Kura Çekilişi</h1>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fa-solid fa-home"></i> Anasayfa</a>
+            </nav>
+        </header>
+
+        <section class="draw-section">
+            <div class="draw-container" id="loginSection">
+                <h2>Kura Çekilişine Katıl</h2>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="username">Adınız:</label>
+                        <input type="text" id="username" placeholder="Adınızı girin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Şifre:</label>
+                        <input type="password" id="password" placeholder="Şifrenizi girin" required>
+                    </div>
+                    <button onclick="login()" class="btn-primary">Giriş Yap</button>
+                    <div id="loginMessage" class="message"></div>
+                </div>
+            </div>
+
+            <div class="draw-container" id="drawSection" style="display: none;">
+                <h2>Kura Çekimi</h2>
+                <div class="user-info">
+                    <p>Hoş geldiniz, <span id="currentUser"></span>!</p>
+                </div>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="selectedNumber">Numara Seçin (1-100):</label>
+                        <input type="number" id="selectedNumber" min="1" max="100" placeholder="1-100 arası bir numara seçin" required>
+                    </div>
+                    <button onclick="drawGift()" class="btn-primary">Kura Çek</button>
+                    <div id="drawMessage" class="message"></div>
+                </div>
+                <div id="resultSection" class="result-section" style="display: none;">
+                    <h3>🎁 Hediye Alacağınız Kişi:</h3>
+                    <div class="result-box">
+                        <p id="giftRecipient"></p>
+                    </div>
+                    <p class="info-text">Bu bilgiyi kimseyle paylaşmayın! 🎄</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer">
+                <p>&copy; 2025 Yılbaşı Kura Çekilişi. Tüm Hakları Saklıdır.</p>
+            </div>
+            <div class="social">
+                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </footer>
+
+        <!-- Admin Button -->
+        <a href="admin.html" class="admin-btn" title="Admin Paneli">
+            <i class="fa-solid fa-gear"></i>
+        </a>
+    </div>
+
+    <script src="js/draw.js"></script>
+</body>
+
+</html>
