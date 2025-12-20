@@ -1,0 +1,392 @@
+/* Kura Çekilişi Sayfası Stilleri */
+
+.draw-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.draw-container {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.draw-container h2 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.draw-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-primary {
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #757575 0%, #616161 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(117, 117, 117, 0.4);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+.message {
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.message.success {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.message.error {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+}
+
+.user-info {
+    background: rgba(76, 175, 80, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid #4CAF50;
+}
+
+.user-info p {
+    color: #fff;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.user-info span {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.result-section {
+    margin-top: 30px;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(46, 125, 50, 0.2) 100%);
+    border-radius: 15px;
+    border: 2px solid #4CAF50;
+    text-align: center;
+}
+
+.result-section h3 {
+    color: #fff;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.result-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.result-box p {
+    color: #4CAF50;
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.info-text {
+    color: #FFD700;
+    font-style: italic;
+    margin-top: 15px;
+}
+
+/* Admin Button */
+.admin-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.admin-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 25px rgba(245, 87, 108, 0.6);
+}
+
+/* Navigation Link Styling */
+nav .draw-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+nav .draw-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Numara Butonları Grid */
+.number-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.number-btn {
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.number-btn:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.5) 0%, rgba(118, 75, 162, 0.5) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.number-btn.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.number-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Seçili Numara Göstergesi */
+.selected-number {
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(56, 142, 60, 0.3) 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    margin: 15px 0;
+}
+
+.selected-number p {
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.selected-number span {
+    color: #FFD700;
+    font-size: 1.4em;
+}
+
+/* Scroll bar stilleri */
+.number-buttons::-webkit-scrollbar {
+    width: 8px;
+}
+
+.number-buttons::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.number-buttons::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 10px;
+}
+
+.number-buttons::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 768px) {
+    .draw-section {
+        padding: 5px;
+        align-items: center; /* Center vertically */
+    }
+
+    .draw-container {
+        padding: 15px;
+        margin: 0;
+        width: 100%;
+        border-radius: 15px;
+    }
+
+    .draw-container h2 {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+
+    .result-box p {
+        font-size: 1.1em;
+    }
+
+    .admin-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .number-buttons {
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 5px;
+        max-height: 180px; /* Limit height to prevent overflow */
+    }
+
+    .number-btn {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+
+    .selected-number p {
+        font-size: 0.9em;
+    }
+
+    .selected-number span {
+        font-size: 1.1em;
+    }
+    
+    .draw-form {
+        gap: 8px;
+    }
+    
+    .form-group {
+        gap: 4px;
+    }
+    
+    .form-group input {
+        padding: 8px;
+        font-size: 14px;
+    }
+    
+    .btn-primary {
+        padding: 8px;
+        font-size: 14px;
+    }
+}

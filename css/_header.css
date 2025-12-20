@@ -1,0 +1,98 @@
+/* Header */
+header {
+    height: 12vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    color: white;
+    position: relative;
+}
+
+.header-left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.header-left img {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.header-center h1 {
+    font-size: 36px;
+    letter-spacing: 2px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-right a {
+    padding: 10px;
+    border: none;
+    font-size: 1.5em;
+    color: white;
+    transition: opacity 0.3s;
+}
+
+.header-right a:hover {
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+    header {
+        height: auto;
+        padding: 15px 20px;
+    }
+
+    .header-left {
+        flex: 0 0 auto;
+    }
+
+    .header-left img {
+        height: 60px;
+    }
+
+    .header-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        flex: none;
+    }
+
+    .header-center h1 {
+        font-size: 20px;
+    }
+
+    .header-right {
+        flex: 0 0 auto;
+    }
+
+    .header-right a {
+        font-size: 1.4em;
+        padding: 5px;
+    }
+}

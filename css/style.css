@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=WindSong:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@1,300&family=Roboto:wght@700&display=swap');
+
+@import "./_header.css";
+@import "./_section.css";
+@import "./_footer.css";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url(../img/background.jpg);
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    width: 100%;
+    font-family: 'Roboto Condensed', sans-serif;
+    color: white;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-y: auto; /* Allow vertical scroll */
+}
+
+.container {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 0 15px;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* @media only screen and (max-width: 1000px) {
+    .social {
+        text-align: center;
+    }
+    .container{
+        text-align: center;
+        margin-top: 0px;
+    }
+    .header-navbar{
+        flex-direction: column;
+    }
+    .header-text{
+        width: 80%;
+    }
+}
+
+@media only screen and (max-width: 700px){
+    ul{
+        flex-direction: column;
+    }
+    li{
+        font-weight: bold;
+    }
+} */

@@ -1,0 +1,185 @@
+/* Section */
+section {
+    display: flex;
+    flex: 1; /* Fill remaining space */
+    /* overflow: hidden; Removed to allow scrolling */
+    padding-bottom: 20px;
+}
+
+.section-menü {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px;
+}
+
+/* ... existing styles ... */
+
+.section-menü ul li {
+    padding-top: 20px;
+    text-shadow: 2px 2px 10px;
+}
+
+.section-menü a {
+    padding-bottom: 50px;
+}
+
+.section-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.aciklama {
+    text-align: center;
+    width: 90%;
+    margin-bottom: 20px;
+}
+
+.aciklama h2 {
+    text-decoration-line: underline;
+    padding-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.aciklama h3 {
+    padding-bottom: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.aciklama-jobs {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.aciklama-jobs p {
+    text-align: left;
+}
+
+.jobs {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: calc(50% - 20px);
+    margin: 10px;
+    padding: 15px;
+    opacity: 0.7;
+    transition: 0.3s;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.jobs:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.jobs h3 {
+    font-size: 1.1em;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.jobs h3 strong {
+    padding-left: 5px;
+    font-size: 0.9em;
+    color: #ddd;
+}
+
+.gorev {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.yer {
+    font-style: italic;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+.job-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+.job-list li {
+    margin-bottom: 3px;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+    section {
+        flex-direction: column;
+        overflow-y: visible; /* Allow content to flow naturally */
+        height: auto; /* Remove fixed height constraint */
+        padding-bottom: 20px;
+    }
+
+    .section-menü {
+        flex-direction: column; /* Stack vertically on mobile */
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        box-shadow: none;
+        background: rgba(0,0,0,0.3); /* Add slight background for readability */
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .section-menü ul {
+        display: flex;
+        flex-direction: column; /* Stack list items */
+        gap: 5px;
+        text-align: center;
+    }
+
+    .section-menü ul li {
+        padding-top: 5px;
+        font-size: 0.9em;
+    }
+    
+    .section-menü a {
+        padding-bottom: 0;
+        margin-top: 10px;
+    }
+
+    .section-wrapper {
+        width: 100%;
+    }
+    
+    .aciklama {
+        width: 100%;
+        margin-bottom: 30px;
+        background: rgba(0,0,0,0.5); /* Darker background for text readability */
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    .aciklama h2 {
+        font-size: 1.2em;
+    }
+    
+    .aciklama p {
+        font-size: 0.95em;
+        line-height: 1.4;
+    }
+
+    .jobs {
+        width: 100%;
+        margin-bottom: 15px;
+        opacity: 1; /* Make fully visible on mobile */
+        background: rgba(255,255,255,0.05);
+        padding: 10px;
+        border-radius: 5px;
+    }
+    
+    .jobs h3 {
+        font-size: 1em;
+    }
+}
