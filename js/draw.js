@@ -7,25 +7,113 @@ const STORAGE_KEYS = {
     CURRENT_USER: 'current_user'
 };
 
-// Kullanıcı giriş kontrolü
-function login() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const messageEl = document.getElementById('loginMessage');
+// Kullanıcı kontrolü
+function checkUser() {
+    const username = document.getElementById('checkUsername').value.trim();
+    const messageEl = document.getElementById('checkMessage');
 
-    if (!username || !password) {
-        showMessage(messageEl, 'Lütfen tüm alanları doldurun!', 'error');
+    if (!username) {
+        showMessage(messageEl, 'Lütfen adınızı girin!', 'error');
         return;
     }
 
     const participants = getParticipants();
     const user = participants.find(p => 
-        p.name.toLowerCase() === username.toLowerCase() && 
-        p.password === password
+        p.name.toLowerCase() === username.toLowerCase()
     );
 
     if (!user) {
-        showMessage(messageEl, 'Kullanıcı adı veya şifre hatalı!', 'error');
+        showMessage(messageEl, 'Katılımcı listesinde bulunamadınız!', 'error');
+        return;
+    }
+
+    // Kullanıcı daha önce kura çekmiş mi kontrol et
+    const draws = getDraws();
+    const existingDraw = draws.find(d => d.userName === user.name);
+
+    if (existingDraw) {
+        // Şifre kontrolü yap
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
+        document.getElementById('checkUserSection').style.display = 'none';
+        document.getElementById('returningUser').textContent = user.name;
+        document.getElementById('loginSection').style.display = 'block';
+        return;
+    }
+
+    // Kullanıcının şifresi var mı?
+    if (!user.password) {
+        // İlk giriş - şifre oluşturma
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
+        document.getElementById('checkUserSection').style.display = 'none';
+        document.getElementById('newUser').textContent = user.name;
+        document.getElementById('createPasswordSection').style.display = 'block';
+    } else {
+        // Şifresi var ama kura çekmemiş - şifre kontrolü
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
+        document.getElementById('checkUserSection').style.display = 'none';
+        document.getElementById('returningUser').textContent = user.name;
+        document.getElementById('loginSection').style.display = 'block';
+    }
+}
+
+// Şifre oluştur
+function createPassword() {
+    const password = document.getElementById('newPassword').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    const messageEl = document.getElementById('createMessage');
+    const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+
+    if (!password || !confirmPassword) {
+        showMessage(messageEl, 'Lütfen tüm alanları doldurun!', 'error');
+        return;
+    }
+
+    if (password.length < 4) {
+        showMessage(messageEl, 'Şifre en az 4 karakter olmalıdır!', 'error');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        showMessage(messageEl, 'Şifreler eşleşmiyor!', 'error');
+        return;
+    }
+
+    // Şifreyi kaydet
+    const participants = getParticipants();
+    const userIndex = participants.findIndex(p => p.name === currentUser);
+    
+    if (userIndex !== -1) {
+        participants[userIndex].password = password;
+        saveParticipants(participants);
+        
+        showMessage(messageEl, 'Şifre oluşturuldu! Kura çekimine yönlendiriliyorsunuz...', 'success');
+        
+        setTimeout(() => {
+            document.getElementById('createPasswordSection').style.display = 'none';
+            document.getElementById('currentUser').textContent = currentUser;
+            document.getElementById('drawSection').style.display = 'block';
+        }, 1500);
+    } else {
+        showMessage(messageEl, 'Bir hata oluştu!', 'error');
+    }
+}
+
+// Kullanıcı girişi (şifre ile)
+function login() {
+    const password = document.getElementById('password').value.trim();
+    const messageEl = document.getElementById('loginMessage');
+    const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+
+    if (!password) {
+        showMessage(messageEl, 'Lütfen şifrenizi girin!', 'error');
+        return;
+    }
+
+    const participants = getParticipants();
+    const user = participants.find(p => p.name === currentUser);
+
+    if (!user || user.password !== password) {
+        showMessage(messageEl, 'Şifre hatalı!', 'error');
         return;
     }
 
@@ -34,18 +122,41 @@ function login() {
     const existingDraw = draws.find(d => d.userName === user.name);
 
     if (existingDraw) {
-        showMessage(messageEl, 'Siz zaten kura çektiniz!', 'error');
+        // Sadece sonuçları göster
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('viewUser').textContent = user.name;
+        document.getElementById('viewGiftRecipient').textContent = existingDraw.recipient;
+        document.getElementById('viewSelectedNumber').textContent = existingDraw.selectedNumber;
+        document.getElementById('viewResultSection').style.display = 'block';
+    } else {
+        // Kura çekimine yönlendir
+        showMessage(messageEl, 'Giriş başarılı!', 'success');
         setTimeout(() => {
-            showResult(existingDraw.recipient);
-        }, 1500);
-        return;
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('currentUser').textContent = currentUser;
+            document.getElementById('drawSection').style.display = 'block';
+        }, 1000);
     }
+}
 
-    // Başarılı giriş
-    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
-    document.getElementById('currentUser').textContent = user.name;
+// Geri dön
+function goBack() {
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
     document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('drawSection').style.display = 'block';
+    document.getElementById('createPasswordSection').style.display = 'none';
+    document.getElementById('checkUserSection').style.display = 'block';
+    document.getElementById('checkUsername').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+}
+
+// Çıkış yap
+function logout() {
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    document.getElementById('viewResultSection').style.display = 'none';
+    document.getElementById('checkUserSection').style.display = 'block';
+    document.getElementById('checkUsername').value = '';
 }
 
 // Kura çekme fonksiyonu
@@ -138,31 +249,25 @@ function saveParticipants(participants) {
 
 // Sayfa yüklendiğinde kontroller
 document.addEventListener('DOMContentLoaded', function() {
-    // Eğer draw.html sayfasındaysak ve kullanıcı giriş yapmışsa
-    if (document.getElementById('drawSection')) {
-        const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-        const draws = getDraws();
-        
-        if (currentUser) {
-            const existingDraw = draws.find(d => d.userName === currentUser);
-            if (existingDraw) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('drawSection').style.display = 'block';
-                document.getElementById('currentUser').textContent = currentUser;
-                showResult(existingDraw.recipient);
-            }
-        }
-    }
+    // Mevcut kullanıcı varsa temizle
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
 });
 
 // Enter tuşu ile form gönderimi
 document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
-        if (document.getElementById('loginSection') && 
-            document.getElementById('loginSection').style.display !== 'none') {
+        const checkUserSection = document.getElementById('checkUserSection');
+        const createPasswordSection = document.getElementById('createPasswordSection');
+        const loginSection = document.getElementById('loginSection');
+        const drawSection = document.getElementById('drawSection');
+        
+        if (checkUserSection && checkUserSection.style.display !== 'none') {
+            checkUser();
+        } else if (createPasswordSection && createPasswordSection.style.display !== 'none') {
+            createPassword();
+        } else if (loginSection && loginSection.style.display !== 'none') {
             login();
-        } else if (document.getElementById('drawSection') && 
-                   document.getElementById('drawSection').style.display !== 'none') {
+        } else if (drawSection && drawSection.style.display !== 'none') {
             drawGift();
         }
     }

@@ -26,11 +26,10 @@ function loadAdminData() {
 // Katılımcı ekle
 function addParticipant() {
     const name = document.getElementById('participantName').value.trim();
-    const password = document.getElementById('participantPassword').value.trim();
     const messageEl = document.getElementById('addMessage');
 
-    if (!name || !password) {
-        showMessage(messageEl, 'Lütfen tüm alanları doldurun!', 'error');
+    if (!name) {
+        showMessage(messageEl, 'Lütfen katılımcı adını girin!', 'error');
         return;
     }
 
@@ -42,11 +41,11 @@ function addParticipant() {
         return;
     }
 
-    // Yeni katılımcı ekle
+    // Yeni katılımcı ekle (şifresiz)
     participants.push({
         id: Date.now(),
         name: name,
-        password: password,
+        password: null, // Kullanıcı ilk girişte oluşturacak
         createdAt: new Date().toISOString()
     });
 
@@ -54,9 +53,8 @@ function addParticipant() {
     
     // Formu temizle
     document.getElementById('participantName').value = '';
-    document.getElementById('participantPassword').value = '';
     
-    showMessage(messageEl, 'Katılımcı başarıyla eklendi!', 'success');
+    showMessage(messageEl, 'Katılımcı başarıyla eklendi! İlk girişte şifre oluşturacak.', 'success');
     loadAdminData();
 }
 
@@ -101,16 +99,22 @@ function updateParticipantsList() {
 
     tbody.innerHTML = participants.map((p, index) => {
         const hasDrawn = draws.find(d => d.userName === p.name);
-        const statusClass = hasDrawn ? 'completed' : 'pending';
-        const statusText = hasDrawn ? 'Çekti' : 'Bekliyor';
+        const drawStatusClass = hasDrawn ? 'completed' : 'pending';
+        const drawStatusText = hasDrawn ? 'Çekti' : 'Bekliyor';
+        
+        const hasPassword = p.password !== null && p.password !== undefined;
+        const passwordStatusClass = hasPassword ? 'completed' : 'pending';
+        const passwordStatusText = hasPassword ? 'Oluşturuldu' : 'Bekliyor';
 
         return `
             <tr>
                 <td>${index + 1}</td>
                 <td>${p.name}</td>
-                <td>${p.password}</td>
                 <td>
-                    <span class="status-badge ${statusClass}">${statusText}</span>
+                    <span class="status-badge ${passwordStatusClass}">${passwordStatusText}</span>
+                </td>
+                <td>
+                    <span class="status-badge ${drawStatusClass}">${drawStatusText}</span>
                 </td>
                 <td>
                     <button class="btn-delete" onclick="deleteParticipant(${p.id})">

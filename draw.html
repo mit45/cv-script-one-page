@@ -32,18 +32,50 @@
         </header>
 
         <section class="draw-section">
-            <div class="draw-container" id="loginSection">
+            <div class="draw-container" id="checkUserSection">
                 <h2>Kura Çekilişine Katıl</h2>
                 <div class="draw-form">
                     <div class="form-group">
-                        <label for="username">Adınız:</label>
-                        <input type="text" id="username" placeholder="Adınızı girin" required>
+                        <label for="checkUsername">Adınız:</label>
+                        <input type="text" id="checkUsername" placeholder="Adınızı girin" required>
+                    </div>
+                    <button onclick="checkUser()" class="btn-primary">Devam Et</button>
+                    <div id="checkMessage" class="message"></div>
+                </div>
+            </div>
+
+            <div class="draw-container" id="createPasswordSection" style="display: none;">
+                <h2>Şifre Oluştur</h2>
+                <div class="user-info">
+                    <p>Hoş geldiniz, <span id="newUser"></span>!</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">İlk kez katılıyorsunuz. Lütfen bir şifre oluşturun.</p>
+                </div>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="newPassword">Şifre:</label>
+                        <input type="password" id="newPassword" placeholder="Şifrenizi oluşturun" required>
                     </div>
                     <div class="form-group">
-                        <label for="password">Şifre:</label>
+                        <label for="confirmPassword">Şifre Tekrar:</label>
+                        <input type="password" id="confirmPassword" placeholder="Şifrenizi tekrar girin" required>
+                    </div>
+                    <button onclick="createPassword()" class="btn-primary">Şifre Oluştur ve Devam Et</button>
+                    <div id="createMessage" class="message"></div>
+                </div>
+            </div>
+
+            <div class="draw-container" id="loginSection" style="display: none;">
+                <h2>Giriş Yap</h2>
+                <div class="user-info">
+                    <p>Hoş geldiniz, <span id="returningUser"></span>!</p>
+                </div>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="password">Şifreniz:</label>
                         <input type="password" id="password" placeholder="Şifrenizi girin" required>
                     </div>
                     <button onclick="login()" class="btn-primary">Giriş Yap</button>
+                    <button onclick="goBack()" class="btn-secondary" style="margin-top: 10px;">Geri Dön</button>
                     <div id="loginMessage" class="message"></div>
                 </div>
             </div>
@@ -67,7 +99,28 @@
                         <p id="giftRecipient"></p>
                     </div>
                     <p class="info-text">Bu bilgiyi kimseyle paylaşmayın! 🎄</p>
+                    <p class="info-text" style="margin-top: 15px; color: rgba(255,255,255,0.7);">Seçiminiz kayıt altına alındı ve değiştirilemez.</p>
                 </div>
+            </div>
+
+            <div class="draw-container" id="viewResultSection" style="display: none;">
+                <h2>Kura Sonucunuz</h2>
+                <div class="user-info">
+                    <p>Hoş geldiniz, <span id="viewUser"></span>!</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">Daha önce kura çektiniz. İşte sonucunuz:</p>
+                </div>
+                <div class="result-section" style="display: block;">
+                    <h3>🎁 Hediye Alacağınız Kişi:</h3>
+                    <div class="result-box">
+                        <p id="viewGiftRecipient"></p>
+                    </div>
+                    <div style="background: rgba(255, 152, 0, 0.2); padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #FF9800;">
+                        <p style="color: #FFD700; margin: 0;"><i class="fa-solid fa-lock"></i> Seçiminiz değiştirilemez!</p>
+                        <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0 0; font-size: 0.9em;">Seçtiğiniz numara: <strong id="viewSelectedNumber"></strong></p>
+                    </div>
+                    <p class="info-text" style="margin-top: 15px;">Bu bilgiyi kimseyle paylaşmayın! 🎄</p>
+                </div>
+                <button onclick="logout()" class="btn-secondary" style="margin-top: 20px; width: 100%;">Çıkış Yap</button>
             </div>
         </section>
 
