@@ -60,7 +60,7 @@
                             <input type="text" id="participantName" placeholder="Katılımcı adı" required>
                             <small style="color: rgba(255,255,255,0.6); font-size: 0.9em;">Katılımcı ilk girişinde kendi şifresini oluşturacak</small>
                         </div>
-                        <button onclick="addParticipant()" class="btn-success">
+                        <button onclick="addParticipantToFirebase()" class="btn-success">
                             <i class="fa-solid fa-plus"></i> Ekle
                         </button>
                     </div>
@@ -142,6 +142,14 @@
         </footer>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+    
+    <!-- App Scripts -->
     <script src="js/draw.js"></script>
     <script src="js/admin.js"></script>
 </body>

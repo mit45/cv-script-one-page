@@ -1,30 +1,41 @@
-// Admin Panel JavaScript
+// Admin Panel JavaScript - Firebase Edition
 
 const ADMIN_PASSWORD = 'admin2025'; // Admin şifresi
 
 // Admin girişi
-function adminLogin() {
+async function adminLogin() {
     const password = document.getElementById('adminPassword').value;
     const messageEl = document.getElementById('adminLoginMessage');
 
     if (password === ADMIN_PASSWORD) {
         document.getElementById('adminLoginSection').style.display = 'none';
         document.getElementById('adminPanelSection').style.display = 'block';
-        loadAdminData();
+        await loadAdminData();
     } else {
         showMessage(messageEl, 'Hatalı admin şifresi!', 'error');
     }
 }
 
 // Admin verilerini yükle
-function loadAdminData() {
-    updateParticipantsList();
-    updateDrawResults();
-    updateStats();
+async function loadAdminData() {
+    await updateParticipantsList();
+    await updateDrawResults();
+    await updateStats();
+    
+    // Realtime güncellemeler için listener'ları başlat
+    onParticipantsChange(async () => {
+        await updateParticipantsList();
+        await updateStats();
+    });
+    
+    onDrawsChange(async () => {
+        await updateDrawResults();
+        await updateStats();
+    });
 }
 
 // Katılımcı ekle
-function addParticipant() {
+async function addParticipantToFirebase() {
     const name = document.getElementById('participantName').value.trim();
     const messageEl = document.getElementById('addMessage');
 
@@ -33,57 +44,64 @@ function addParticipant() {
         return;
     }
 
-    const participants = getParticipants();
-
     // Aynı isimde katılımcı var mı kontrol et
-    if (participants.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+    const existingParticipant = await findParticipantByName(name);
+    if (existingParticipant) {
         showMessage(messageEl, 'Bu isimde bir katılımcı zaten var!', 'error');
         return;
     }
 
     // Yeni katılımcı ekle (şifresiz)
-    participants.push({
-        id: Date.now(),
+    const participant = {
         name: name,
         password: null, // Kullanıcı ilk girişte oluşturacak
         createdAt: new Date().toISOString()
-    });
+    };
 
-    saveParticipants(participants);
+    const success = await addParticipant(participant);
     
-    // Formu temizle
-    document.getElementById('participantName').value = '';
-    
-    showMessage(messageEl, 'Katılımcı başarıyla eklendi! İlk girişte şifre oluşturacak.', 'success');
-    loadAdminData();
+    if (success) {
+        // Formu temizle
+        document.getElementById('participantName').value = '';
+        showMessage(messageEl, 'Katılımcı başarıyla eklendi! İlk girişte şifre oluşturacak.', 'success');
+        await loadAdminData();
+    } else {
+        showMessage(messageEl, 'Katılımcı eklenirken hata oluştu!', 'error');
+    }
 }
 
 // Katılımcı sil
-function deleteParticipant(participantId) {
+async function deleteParticipantFromDB(participantId) {
     if (!confirm('Bu katılımcıyı silmek istediğinizden emin misiniz?')) {
         return;
     }
 
-    let participants = getParticipants();
+    const participants = await getParticipants();
     const participant = participants.find(p => p.id === participantId);
     
     if (participant) {
         // İlgili kura sonuçlarını da sil
-        let draws = getDraws();
-        draws = draws.filter(d => d.userName !== participant.name && d.recipient !== participant.name);
-        localStorage.setItem(STORAGE_KEYS.DRAWS, JSON.stringify(draws));
+        const draws = await getDraws();
+        for (const draw of draws) {
+            if (draw.userName === participant.name || draw.recipient === participant.name) {
+                await database.ref('draws/' + draw.id).remove();
+            }
+        }
     }
 
-    participants = participants.filter(p => p.id !== participantId);
-    saveParticipants(participants);
+    const success = await deleteParticipant(participantId);
     
-    loadAdminData();
+    if (success) {
+        await loadAdminData();
+    } else {
+        alert('Katılımcı silinirken hata oluştu!');
+    }
 }
 
 // Katılımcılar listesini güncelle
-function updateParticipantsList() {
-    const participants = getParticipants();
-    const draws = getDraws();
+async function updateParticipantsList() {
+    const participants = await getParticipants();
+    const draws = await getDraws();
     const tbody = document.getElementById('participantsList');
 
     if (participants.length === 0) {
@@ -98,27 +116,20 @@ function updateParticipantsList() {
     }
 
     tbody.innerHTML = participants.map((p, index) => {
-        const hasDrawn = draws.find(d => d.userName === p.name);
-        const drawStatusClass = hasDrawn ? 'completed' : 'pending';
-        const drawStatusText = hasDrawn ? 'Çekti' : 'Bekliyor';
+        const hasDraw = draws.find(d => d.userName === p.name);
+        const hasPassword = p.password ? '✓' : '✗';
+        const drawStatus = hasDraw ? '✓ Çekti' : '✗ Çekmedi';
+        const recipient = hasDraw ? hasDraw.recipient : '-';
         
-        const hasPassword = p.password !== null && p.password !== undefined;
-        const passwordStatusClass = hasPassword ? 'completed' : 'pending';
-        const passwordStatusText = hasPassword ? 'Oluşturuldu' : 'Bekliyor';
-
         return `
             <tr>
                 <td>${index + 1}</td>
                 <td>${p.name}</td>
+                <td>${hasPassword}</td>
+                <td>${drawStatus}</td>
                 <td>
-                    <span class="status-badge ${passwordStatusClass}">${passwordStatusText}</span>
-                </td>
-                <td>
-                    <span class="status-badge ${drawStatusClass}">${drawStatusText}</span>
-                </td>
-                <td>
-                    <button class="btn-delete" onclick="deleteParticipant(${p.id})">
-                        <i class="fa-solid fa-trash"></i> Sil
+                    <button onclick="deleteParticipantFromDB('${p.id}')" class="btn-delete" title="Sil">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </td>
             </tr>
@@ -127,14 +138,14 @@ function updateParticipantsList() {
 }
 
 // Kura sonuçlarını güncelle
-function updateDrawResults() {
-    const draws = getDraws();
-    const tbody = document.getElementById('drawResultsList');
+async function updateDrawResults() {
+    const draws = await getDraws();
+    const tbody = document.getElementById('drawResults');
 
     if (draws.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="3" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">
+                <td colspan="4" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">
                     Henüz kura çekilmemiş
                 </td>
             </tr>
@@ -142,101 +153,133 @@ function updateDrawResults() {
         return;
     }
 
-    tbody.innerHTML = draws.map(d => `
-        <tr>
-            <td>${d.userName}</td>
-            <td>${d.selectedNumber}</td>
-            <td>${d.recipient}</td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = draws.map((d, index) => {
+        const date = new Date(d.date).toLocaleString('tr-TR');
+        return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${d.userName}</td>
+                <td>${d.recipient}</td>
+                <td>${d.selectedNumber}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // İstatistikleri güncelle
-function updateStats() {
-    const participants = getParticipants();
-    const draws = getDraws();
+async function updateStats() {
+    const participants = await getParticipants();
+    const draws = await getDraws();
 
     document.getElementById('totalParticipants').textContent = participants.length;
-    document.getElementById('drawnParticipants').textContent = draws.length;
+    document.getElementById('completedDraws').textContent = draws.length;
+    document.getElementById('remainingDraws').textContent = participants.length - draws.length;
+    
+    // Şifresi olan katılımcılar
+    const withPassword = participants.filter(p => p.password).length;
+    document.getElementById('withPassword').textContent = withPassword;
 }
 
-// Tüm kuraları sıfırla
-function resetAllDraws() {
-    if (!confirm('Tüm kura sonuçlarını sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+// Toplu katılımcı ekleme
+async function bulkAddParticipants() {
+    const textarea = document.getElementById('bulkNames');
+    const names = textarea.value.split('\n')
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+
+    const messageEl = document.getElementById('bulkMessage');
+
+    if (names.length === 0) {
+        showMessage(messageEl, 'Lütfen en az bir isim girin!', 'error');
         return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.DRAWS, JSON.stringify([]));
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    let addedCount = 0;
+    let skippedCount = 0;
+
+    for (const name of names) {
+        const existingParticipant = await findParticipantByName(name);
+        
+        if (!existingParticipant) {
+            const participant = {
+                name: name,
+                password: null,
+                createdAt: new Date().toISOString()
+            };
+            
+            const success = await addParticipant(participant);
+            if (success) {
+                addedCount++;
+            }
+        } else {
+            skippedCount++;
+        }
+    }
+
+    textarea.value = '';
+    showMessage(messageEl, 
+        `${addedCount} katılımcı eklendi. ${skippedCount > 0 ? skippedCount + ' zaten vardı.' : ''}`, 
+        'success'
+    );
     
-    alert('Tüm kura sonuçları sıfırlandı!');
-    loadAdminData();
+    await loadAdminData();
 }
 
-// Tüm verileri sil
-function clearAllData() {
-    if (!confirm('TÜM VERİLERİ SİLMEK İSTEDİĞİNİZDEN EMİN MİSİNİZ?\n\nBu işlem:\n- Tüm katılımcıları\n- Tüm kura sonuçlarını\n\nkalıcı olarak silecektir ve GERİ ALINAMAZ!')) {
+// Tüm verileri sıfırla
+async function resetAllData() {
+    if (!confirm('TÜM VERİLERİ SİLMEK İSTEDİĞİNİZDEN EMİN MİSİNİZ? Bu işlem geri alınamaz!')) {
         return;
     }
 
-    const secondConfirm = prompt('Onaylamak için "SIL" yazın:');
-    if (secondConfirm !== 'SIL') {
-        alert('İşlem iptal edildi.');
+    if (!confirm('Son kez soruyorum: Tüm katılımcılar ve kura sonuçları silinecek. Devam edilsin mi?')) {
         return;
     }
 
-    localStorage.removeItem(STORAGE_KEYS.PARTICIPANTS);
-    localStorage.removeItem(STORAGE_KEYS.DRAWS);
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    const success = await clearParticipants();
     
-    alert('Tüm veriler silindi!');
-    loadAdminData();
+    if (success) {
+        alert('Tüm veriler başarıyla silindi!');
+        await loadAdminData();
+    } else {
+        alert('Veriler silinirken hata oluştu!');
+    }
 }
 
-// Verileri indir (JSON formatında)
-function exportData() {
-    const data = {
-        participants: getParticipants(),
-        draws: getDraws(),
-        exportDate: new Date().toISOString()
-    };
+// Sadece kura sonuçlarını sıfırla
+async function resetDraws() {
+    if (!confirm('Tüm kura sonuçlarını silmek istediğinizden emin misiniz?')) {
+        return;
+    }
 
-    const dataStr = JSON.stringify(data, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const success = await clearDraws();
     
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `kura-verileri-${new Date().toISOString().split('T')[0]}.json`;
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    URL.revokeObjectURL(url);
-    
-    alert('Veriler başarıyla indirildi!');
+    if (success) {
+        alert('Kura sonuçları başarıyla silindi!');
+        await loadAdminData();
+    } else {
+        alert('Kura sonuçları silinirken hata oluştu!');
+    }
 }
 
-// Sayfa yüklendiğinde
+// Admin çıkış
+function adminLogout() {
+    // Listener'ları kapat
+    offParticipantsChange();
+    offDrawsChange();
+    
+    document.getElementById('adminPanelSection').style.display = 'none';
+    document.getElementById('adminLoginSection').style.display = 'block';
+    document.getElementById('adminPassword').value = '';
+}
+
+// Enter tuşu ile giriş
 document.addEventListener('DOMContentLoaded', function() {
-    // Admin panelindeyse Enter tuşu ile giriş
-    if (document.getElementById('adminPassword')) {
-        document.getElementById('adminPassword').addEventListener('keypress', function(e) {
+    const passwordInput = document.getElementById('adminPassword');
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 adminLogin();
             }
         });
-    }
-
-    // Admin panel açıksa verileri yükle
-    if (document.getElementById('adminPanelSection')) {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('autologin') === 'true') {
-            // Otomatik giriş (geliştirme amaçlı)
-            document.getElementById('adminLoginSection').style.display = 'none';
-            document.getElementById('adminPanelSection').style.display = 'block';
-            loadAdminData();
-        }
     }
 });

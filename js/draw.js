@@ -1,14 +1,13 @@
-// Kura Çekilişi Sistemi - Ana JavaScript Dosyası
+// Kura Çekilişi Sistemi - Firebase Edition
 
-// LocalStorage anahtarları
-const STORAGE_KEYS = {
-    PARTICIPANTS: 'draw_participants',
-    DRAWS: 'draw_results',
-    CURRENT_USER: 'current_user'
-};
+// Seçilen numara değişkeni
+let selectedNumber = null;
+
+// Session storage için kullanıcı
+const CURRENT_USER_KEY = 'current_user';
 
 // Kullanıcı kontrolü
-function checkUser() {
+async function checkUser() {
     const username = document.getElementById('checkUsername').value.trim();
     const messageEl = document.getElementById('checkMessage');
 
@@ -17,10 +16,7 @@ function checkUser() {
         return;
     }
 
-    const participants = getParticipants();
-    const user = participants.find(p => 
-        p.name.toLowerCase() === username.toLowerCase()
-    );
+    const user = await findParticipantByName(username);
 
     if (!user) {
         showMessage(messageEl, 'Katılımcı listesinde bulunamadınız!', 'error');
@@ -28,12 +24,11 @@ function checkUser() {
     }
 
     // Kullanıcı daha önce kura çekmiş mi kontrol et
-    const draws = getDraws();
-    const existingDraw = draws.find(d => d.userName === user.name);
+    const existingDraw = await findDrawByUser(user.name);
 
     if (existingDraw) {
         // Şifre kontrolü yap
-        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
+        sessionStorage.setItem(CURRENT_USER_KEY, user.name);
         document.getElementById('checkUserSection').style.display = 'none';
         document.getElementById('returningUser').textContent = user.name;
         document.getElementById('loginSection').style.display = 'block';
@@ -43,13 +38,13 @@ function checkUser() {
     // Kullanıcının şifresi var mı?
     if (!user.password) {
         // İlk giriş - şifre oluşturma
-        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
+        sessionStorage.setItem(CURRENT_USER_KEY, user.name);
         document.getElementById('checkUserSection').style.display = 'none';
         document.getElementById('newUser').textContent = user.name;
         document.getElementById('createPasswordSection').style.display = 'block';
     } else {
         // Şifresi var ama kura çekmemiş - şifre kontrolü
-        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, user.name);
+        sessionStorage.setItem(CURRENT_USER_KEY, user.name);
         document.getElementById('checkUserSection').style.display = 'none';
         document.getElementById('returningUser').textContent = user.name;
         document.getElementById('loginSection').style.display = 'block';
@@ -57,11 +52,11 @@ function checkUser() {
 }
 
 // Şifre oluştur
-function createPassword() {
+async function createPassword() {
     const password = document.getElementById('newPassword').value.trim();
     const confirmPassword = document.getElementById('confirmPassword').value.trim();
     const messageEl = document.getElementById('createMessage');
-    const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+    const currentUser = sessionStorage.getItem(CURRENT_USER_KEY);
 
     if (!password || !confirmPassword) {
         showMessage(messageEl, 'Lütfen tüm alanları doldurun!', 'error');
@@ -78,39 +73,41 @@ function createPassword() {
         return;
     }
 
-    // Şifreyi kaydet
-    const participants = getParticipants();
-    const userIndex = participants.findIndex(p => p.name === currentUser);
+    // Kullanıcıyı bul ve şifreyi kaydet
+    const user = await findParticipantByName(currentUser);
     
-    if (userIndex !== -1) {
-        participants[userIndex].password = password;
-        saveParticipants(participants);
+    if (user) {
+        const success = await updateParticipant(user.id, { password: password });
         
-        showMessage(messageEl, 'Şifre oluşturuldu! Kura çekimine yönlendiriliyorsunuz...', 'success');
-        
-        setTimeout(() => {
-            document.getElementById('createPasswordSection').style.display = 'none';
-            document.getElementById('currentUser').textContent = currentUser;
-            document.getElementById('drawSection').style.display = 'block';
-        }, 1500);
+        if (success) {
+            showMessage(messageEl, 'Şifre oluşturuldu! Kura çekimine yönlendiriliyorsunuz...', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('createPasswordSection').style.display = 'none';
+                document.getElementById('currentUser').textContent = currentUser;
+                document.getElementById('drawSection').style.display = 'block';
+                createNumberButtons(); // Butonları oluştur
+            }, 1500);
+        } else {
+            showMessage(messageEl, 'Şifre kaydedilirken hata oluştu!', 'error');
+        }
     } else {
         showMessage(messageEl, 'Bir hata oluştu!', 'error');
     }
 }
 
 // Kullanıcı girişi (şifre ile)
-function login() {
+async function login() {
     const password = document.getElementById('password').value.trim();
     const messageEl = document.getElementById('loginMessage');
-    const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+    const currentUser = sessionStorage.getItem(CURRENT_USER_KEY);
 
     if (!password) {
         showMessage(messageEl, 'Lütfen şifrenizi girin!', 'error');
         return;
     }
 
-    const participants = getParticipants();
-    const user = participants.find(p => p.name === currentUser);
+    const user = await findParticipantByName(currentUser);
 
     if (!user || user.password !== password) {
         showMessage(messageEl, 'Şifre hatalı!', 'error');
@@ -118,8 +115,7 @@ function login() {
     }
 
     // Kullanıcı zaten kura çekmiş mi?
-    const draws = getDraws();
-    const existingDraw = draws.find(d => d.userName === user.name);
+    const existingDraw = await findDrawByUser(user.name);
 
     if (existingDraw) {
         // Sadece sonuçları göster
@@ -135,13 +131,14 @@ function login() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('currentUser').textContent = currentUser;
             document.getElementById('drawSection').style.display = 'block';
+            createNumberButtons(); // Butonları oluştur
         }, 1000);
     }
 }
 
 // Geri dön
 function goBack() {
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    sessionStorage.removeItem(CURRENT_USER_KEY);
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('createPasswordSection').style.display = 'none';
     document.getElementById('checkUserSection').style.display = 'block';
@@ -151,30 +148,65 @@ function goBack() {
     document.getElementById('confirmPassword').value = '';
 }
 
+// Numara butonlarını oluştur
+async function createNumberButtons() {
+    const participants = await getParticipants();
+    const totalNumbers = participants.length;
+    const buttonContainer = document.getElementById('numberButtons');
+    buttonContainer.innerHTML = '';
+    
+    for (let i = 1; i <= totalNumbers; i++) {
+        const button = document.createElement('button');
+        button.className = 'number-btn';
+        button.textContent = i;
+        button.onclick = () => selectNumber(i);
+        buttonContainer.appendChild(button);
+    }
+}
+
+// Numara seç
+function selectNumber(number) {
+    // Tüm butonlardan seçili sınıfını kaldır
+    const allButtons = document.querySelectorAll('.number-btn');
+    allButtons.forEach(btn => btn.classList.remove('selected'));
+    
+    // Seçilen butona seçili sınıfını ekle
+    event.target.classList.add('selected');
+    
+    // Seçilen numarayı kaydet
+    selectedNumber = number;
+    
+    // Seçili numarayı göster
+    document.getElementById('selectedNumberText').textContent = number;
+    document.getElementById('selectedNumberDisplay').style.display = 'block';
+    
+    // Kura çek butonunu aktif et
+    document.getElementById('drawButton').disabled = false;
+}
+
 // Çıkış yap
 function logout() {
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    sessionStorage.removeItem(CURRENT_USER_KEY);
     document.getElementById('viewResultSection').style.display = 'none';
     document.getElementById('checkUserSection').style.display = 'block';
     document.getElementById('checkUsername').value = '';
 }
 
 // Kura çekme fonksiyonu
-function drawGift() {
-    const selectedNumber = parseInt(document.getElementById('selectedNumber').value);
+async function drawGift() {
     const messageEl = document.getElementById('drawMessage');
-    const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+    const currentUser = sessionStorage.getItem(CURRENT_USER_KEY);
 
-    if (!selectedNumber || selectedNumber < 1 || selectedNumber > 100) {
-        showMessage(messageEl, 'Lütfen 1-100 arası geçerli bir numara seçin!', 'error');
+    if (!selectedNumber || selectedNumber < 1) {
+        showMessage(messageEl, 'Lütfen geçerli bir numara seçin!', 'error');
         return;
     }
 
-    const participants = getParticipants();
-    const draws = getDraws();
+    const participants = await getParticipants();
+    const draws = await getDraws();
 
     // Mevcut kullanıcıyı bul
-    const currentParticipant = participants.find(p => p.name === currentUser);
+    const currentParticipant = await findParticipantByName(currentUser);
     if (!currentParticipant) {
         showMessage(messageEl, 'Kullanıcı bulunamadı!', 'error');
         return;
@@ -204,14 +236,17 @@ function drawGift() {
         date: new Date().toISOString()
     };
 
-    draws.push(drawResult);
-    localStorage.setItem(STORAGE_KEYS.DRAWS, JSON.stringify(draws));
+    const success = await addDraw(drawResult);
 
-    // Sonucu göster
-    showMessage(messageEl, 'Kura çekildi!', 'success');
-    setTimeout(() => {
-        showResult(recipient.name);
-    }, 1000);
+    if (success) {
+        // Sonucu göster
+        showMessage(messageEl, 'Kura çekildi!', 'success');
+        setTimeout(() => {
+            showResult(recipient.name);
+        }, 1000);
+    } else {
+        showMessage(messageEl, 'Kura kaydedilirken hata oluştu!', 'error');
+    }
 }
 
 // Sonucu göster
@@ -232,25 +267,10 @@ function showMessage(element, message, type) {
     }, 3000);
 }
 
-// LocalStorage yardımcı fonksiyonları
-function getParticipants() {
-    const data = localStorage.getItem(STORAGE_KEYS.PARTICIPANTS);
-    return data ? JSON.parse(data) : [];
-}
-
-function getDraws() {
-    const data = localStorage.getItem(STORAGE_KEYS.DRAWS);
-    return data ? JSON.parse(data) : [];
-}
-
-function saveParticipants(participants) {
-    localStorage.setItem(STORAGE_KEYS.PARTICIPANTS, JSON.stringify(participants));
-}
-
 // Sayfa yüklendiğinde kontroller
 document.addEventListener('DOMContentLoaded', function() {
     // Mevcut kullanıcı varsa temizle
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    sessionStorage.removeItem(CURRENT_USER_KEY);
 });
 
 // Enter tuşu ile form gönderimi
