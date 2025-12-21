@@ -24,96 +24,188 @@
     <div class="container">
         <header>
             <div class="logo">
-                <h1>Admin Panel</h1>
+                <!-- Logo Text Removed -->
             </div>
             <nav>
                 <a href="index.html" title="Anasayfa"><i class="fa-solid fa-home"></i></a>
-                <a href="draw.html" title="Kura Sayfası"><i class="fa-solid fa-gift"></i></a>
             </nav>
         </header>
 
         <section class="admin-section">
-            <!-- Admin Login -->
-            <div class="admin-container" id="adminLoginSection">
-                <h2>Admin Girişi</h2>
-                <div class="admin-form">
-                    <div class="form-group">
-                        <label for="adminEmail">E-posta:</label>
-                        <input type="email" id="adminEmail" placeholder="E-posta adresinizi girin" required>
+            <!-- Login Section Wrapper -->
+            <div class="login-page-wrapper" id="adminLoginSection">
+                
+                <!-- Left Side: Intro -->
+                <div class="intro-section">
+                    <h1>Çekiliş Heyecanına Katıl!</h1>
+                    <p>
+                        Etkinliklerinizi kolayca yönetin, katılımcıları ekleyin ve şeffaf bir şekilde kura çekin.
+                        <br><br>
+                        Hemen giriş yapın veya kayıt olun, şanslı kazananları belirlemeye başlayın!
+                    </p>
+                </div>
+
+                <!-- Right Side: Login Box -->
+                <div class="admin-container login-container">
+                    <div class="login-header">
+                        <i class="fa-solid fa-gift login-icon"></i>
+                        <h2 id="formTitle">Çekiliş Uygulamasına Hoşgeldiniz</h2>
+                        <p class="login-subtitle">Devam etmek için lütfen giriş yapın</p>
                     </div>
-                    <div class="form-group">
-                        <label for="adminPassword">Şifre:</label>
-                        <input type="password" id="adminPassword" placeholder="Şifrenizi girin" required>
+                    
+                    <!-- Login Form -->
+                    <div class="admin-form" id="loginForm">
+                        <div class="form-group">
+                            <label for="adminEmail">E-posta:</label>
+                            <input type="email" id="adminEmail" placeholder="E-posta adresinizi girin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Şifre:</label>
+                            <input type="password" id="adminPassword" placeholder="Şifrenizi girin" required>
+                        </div>
+                        <button onclick="adminLogin()" class="btn-primary">Giriş Yap</button>
+                        <div class="form-footer">
+                            <a href="#" onclick="toggleForms('register')" class="login-link">Hesabın yok mu? Kaydol</a>
+                        </div>
+                        <div id="adminLoginMessage" class="message"></div>
                     </div>
-                    <button onclick="adminLogin()" class="btn-primary">Giriş Yap</button>
-                    <div id="adminLoginMessage" class="message"></div>
+
+                    <!-- Register Form -->
+                    <div class="admin-form" id="registerForm" style="display: none;">
+                        <div class="form-group">
+                            <label for="regName">Ad Soyad:</label>
+                            <input type="text" id="regName" placeholder="Adınızı ve Soyadınızı girin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regEmail">E-posta:</label>
+                            <input type="email" id="regEmail" placeholder="E-posta adresinizi girin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword">Şifre:</label>
+                            <input type="password" id="regPassword" placeholder="Şifre belirleyin (en az 6 karakter)" required>
+                        </div>
+                        <button onclick="registerUser()" class="btn-success">Kaydol</button>
+                        <div class="form-footer">
+                            <a href="#" onclick="toggleForms('login')" class="login-link">Zaten hesabın var mı? Giriş Yap</a>
+                        </div>
+                        <div id="registerMessage" class="message"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Admin Panel -->
-            <div class="admin-container" id="adminPanelSection" style="display: none;">
+            <!-- User Panel (Normal Üyeler İçin) -->
+            <div class="admin-container" id="userPanelSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>Kura Listesi Yönetimi</h2>
+                    <h2>Hoşgeldin, <span id="userNameDisplay"></span></h2>
                     <button onclick="adminLogout()" style="background-color: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;">
                         <i class="fa-solid fa-sign-out-alt"></i> Çıkış Yap
                     </button>
                 </div>
                 
-                <!-- Add Participant -->
                 <div class="admin-box">
-                    <h3><i class="fa-solid fa-user-plus"></i> Katılımcı Ekle</h3>
-                    <div class="admin-form">
-                        <div class="form-group">
-                            <label for="participantNames">Ad Soyad Listesi:</label>
-                            <textarea id="participantNames" placeholder="Her satıra bir isim gelecek şekilde yazın&#10;Örnek:&#10;Ahmet Yılmaz&#10;Ayşe Demir" rows="5" style="width: 100%; padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); resize: vertical;"></textarea>
-                            <small style="color: rgba(255,255,255,0.6); font-size: 0.9em;">Katılımcılar ilk girişlerinde kendi şifrelerini oluşturacaklar</small>
-                        </div>
-                        <button onclick="addParticipantsToFirebase()" class="btn-success">
-                            <i class="fa-solid fa-plus"></i> Toplu Ekle
-                        </button>
-                        <div id="addMessage" class="message"></div>
+                    <h3><i class="fa-solid fa-gift"></i> Kura Sonucum</h3>
+                    <div id="userDrawResult" style="text-align: center; padding: 20px; font-size: 1.2em;">
+                        Yükleniyor...
                     </div>
-                    <div id="addMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- Admin Panel (Sadece Admin İçin) -->
+            <div class="admin-container" id="adminPanelSection" style="display: none;">
+                <div class="admin-header-controls">
+                    <h2>Kura Yönetim Paneli</h2>
+                    <button onclick="adminLogout()" style="background-color: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;">
+                        <i class="fa-solid fa-sign-out-alt"></i> Çıkış Yap
+                    </button>
                 </div>
 
-                <!-- Participants List -->
-                <div class="admin-box">
-                    <h3><i class="fa-solid fa-users"></i> Katılımcı Listesi</h3>
-                    <div class="participants-stats">
-                        <div class="stat-box">
-                            <span class="stat-label">Toplam:</span>
-                            <span id="totalParticipants" class="stat-value">0</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">Çekenler:</span>
-                            <span id="drawnParticipants" class="stat-value">0</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">Kalan:</span>
-                            <span id="remainingDraws" class="stat-value">0</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-label">Şifreli:</span>
-                            <span id="withPassword" class="stat-value">0</span>
+                <!-- Events List & Create -->
+                <div class="admin-box" id="eventsListSection">
+                    <h3><i class="fa-solid fa-calendar-plus"></i> Kura Etkinliklerim</h3>
+                    
+                    <!-- Create New Event -->
+                    <div class="admin-form" style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div class="form-group">
+                            <label for="newEventName">Yeni Kura İsmi:</label>
+                            <div class="new-event-form">
+                                <input type="text" id="newEventName" placeholder="Örn: 2025 Ofis Çekilişi">
+                                <button onclick="createNewEvent()" class="btn-primary" style="width: auto; white-space: nowrap;">
+                                    <i class="fa-solid fa-plus"></i> Oluştur
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table class="participants-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Ad Soyad</th>
-                                    <th>Şifre Durumu</th>
-                                    <th>Kura Durumu</th>
-                                    <th>İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody id="participantsList">
-                                <!-- Dinamik olarak doldurulacak -->
-                            </tbody>
-                        </table>
+
+                    <!-- List -->
+                    <div id="myEventsList" style="display: grid; gap: 15px;">
+                        <!-- JS ile doldurulacak -->
+                        <div style="text-align: center; color: rgba(255,255,255,0.5);">Yükleniyor...</div>
                     </div>
                 </div>
+                
+                <!-- Selected Event Management (Hidden by default) -->
+                <div id="eventManagementSection" style="display: none;">
+                    <button onclick="showEventsList()" style="background: none; border: none; color: #667eea; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; gap: 5px;">
+                        <i class="fa-solid fa-arrow-left"></i> Listeye Dön
+                    </button>
+                    
+                    <h3 id="currentEventTitle" style="margin-bottom: 20px; color: white; font-size: 1.5em;"></h3>
+
+                    <!-- Add Participant -->
+                    <div class="admin-box">
+                        <h3><i class="fa-solid fa-user-plus"></i> Katılımcı Ekle</h3>
+                        <div class="admin-form">
+                            <div class="form-group">
+                                <label for="participantNames">Ad Soyad Listesi:</label>
+                                <textarea id="participantNames" placeholder="Her satıra bir isim gelecek şekilde yazın&#10;Örnek:&#10;Ahmet Yılmaz&#10;Ayşe Demir" rows="5" style="width: 100%; padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); resize: vertical;"></textarea>
+                                <small style="color: rgba(255,255,255,0.6); font-size: 0.9em;">Katılımcılar ilk girişlerinde kendi şifrelerini oluşturacaklar</small>
+                            </div>
+                            <button onclick="addParticipantsToFirebase()" class="btn-success">
+                                <i class="fa-solid fa-plus"></i> Toplu Ekle
+                            </button>
+                            <div id="addMessage" class="message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Participants List -->
+                    <div class="admin-box">
+                        <h3><i class="fa-solid fa-users"></i> Katılımcı Listesi</h3>
+                        <div class="participants-stats">
+                            <div class="stat-box">
+                                <span class="stat-label">Toplam:</span>
+                                <span id="totalParticipants" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Çekenler:</span>
+                                <span id="drawnParticipants" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Kalan:</span>
+                                <span id="remainingDraws" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Şifreli:</span>
+                                <span id="withPassword" class="stat-value">0</span>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="participants-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ad Soyad</th>
+                                        <th>Şifre Durumu</th>
+                                        <th>Kura Durumu</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="participantsList">
+                                    <!-- Dinamik olarak doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                
 
                 <!-- Draw Results -->
                 <div class="admin-box">
@@ -149,12 +241,13 @@
                         </button>
                     </div>
                 </div>
+                </div>
             </div>
         </section>
 
-        <footer>
+        <footer style="justify-content: center; text-align: center;">
             <div class="footer">
-                <p>&copy; 2025 Yılbaşı Kura Çekilişi - Admin Panel. Tüm Hakları Saklıdır.</p>
+                <p>&copy; 2025 Çekiliş Uygulaması -by Ümit TOPUZ. Tüm Hakları Saklıdır.</p>
             </div>
         </footer>
     </div>
@@ -168,8 +261,39 @@
     <script src="js/firebase-config.js"></script>
     
     <!-- App Scripts -->
-    <script src="js/draw.js"></script>
     <script src="js/admin.js"></script>
+
+    <!-- Confetti Effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        // Simple confetti effect on load
+        window.addEventListener('load', () => {
+            // Check if we are on the login screen (adminLoginSection is visible)
+            const loginSection = document.getElementById('adminLoginSection');
+            if (loginSection && getComputedStyle(loginSection).display !== 'none') {
+                var duration = 3 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+                function randomInRange(min, max) {
+                  return Math.random() * (max - min) + min;
+                }
+
+                var interval = setInterval(function() {
+                  var timeLeft = animationEnd - Date.now();
+
+                  if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                  }
+
+                  var particleCount = 50 * (timeLeft / duration);
+                  // since particles fall down, start a bit higher than random
+                  confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                  confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }, 250);
+            }
+        });
+    </script>
 </body>
 
 </html>

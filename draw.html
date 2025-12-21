@@ -31,8 +31,12 @@
         </header>
 
         <section class="draw-section">
+            <!-- 1. Adım: İsim Girişi (İlk Ekran) -->
             <div class="draw-container" id="checkUserSection">
                 <h2>Kura Çekilişine Katıl</h2>
+                <p style="text-align: center; margin-bottom: 20px; color: rgba(255,255,255,0.8);">
+                    Hoşgeldin! Devam etmek için lütfen adını gir.
+                </p>
                 <div class="draw-form">
                     <div class="form-group">
                         <label for="checkUsername">Adınız:</label>
@@ -42,6 +46,8 @@
                     <div id="checkMessage" class="message"></div>
                 </div>
             </div>
+
+
 
             <div class="draw-container" id="createPasswordSection" style="display: none;">
                 <h2>Şifre Oluştur</h2>
@@ -79,37 +85,30 @@
                 </div>
             </div>
 
-            <div class="draw-container" id="drawSection" style="display: none;">
-                <h2>Kura Çekimi</h2>
+            <!-- 4. Adım: Kura Seçimi (Grid) -->
+            <div class="draw-container" id="drawBoardSection" style="display: none;">
+                <h2>Bir Kura Numarası Seç</h2>
                 <div class="user-info">
-                    <p>Hoş geldiniz, <span id="currentUser"></span>!</p>
+                    <p>Merhaba, <span id="boardUser"></span>!</p>
+                    <p style="font-size: 0.9em; margin-top: 5px;">Senin numaran: <strong id="myNumberDisplay"></strong></p>
                 </div>
+                <p style="text-align: center; margin-bottom: 15px; color: rgba(255,255,255,0.7); font-size: 0.9em;">
+                    Kırmızı: Dolu | Gri: Senin Numaran | Mavi: Seçilebilir
+                </p>
                 <div class="draw-form">
                     <div class="form-group">
-                        <label>Numara Seçin:</label>
-                        <div id="numberButtons" class="number-buttons"></div>
+                        <div id="drawBoardButtons" class="number-buttons">
+                            <!-- JS ile doldurulacak -->
+                        </div>
                     </div>
-                    <div id="selectedNumberDisplay" class="selected-number" style="display: none;">
-                        <p>Seçilen Numara: <span id="selectedNumberText"></span></p>
-                    </div>
-                    <button onclick="drawGift()" class="btn-primary" id="drawButton" disabled>Kura Çek</button>
-                    <div id="drawMessage" class="message"></div>
-                </div>
-                <div id="resultSection" class="result-section" style="display: none;">
-                    <h3>🎁 Hediye Alacağınız Kişi:</h3>
-                    <div class="result-box">
-                        <p id="giftRecipient"></p>
-                    </div>
-                    <p class="info-text">Bu bilgiyi kimseyle paylaşmayın! 🎄</p>
-                    <p class="info-text" style="margin-top: 15px; color: rgba(255,255,255,0.7);">Seçiminiz kayıt altına alındı ve değiştirilemez.</p>
+                    <div id="drawBoardMessage" class="message"></div>
                 </div>
             </div>
 
-            <div class="draw-container" id="viewResultSection" style="display: none;">
-                <h2>Kura Sonucunuz</h2>
+            <!-- 5. Adım: Sonuç Ekranı -->
+            <div class="draw-container" id="resultContainer" style="display: none;">
                 <div class="user-info">
-                    <p>Hoş geldiniz, <span id="viewUser"></span>!</p>
-                    <p style="font-size: 0.9em; margin-top: 10px;">Daha önce kura çektiniz. İşte sonucunuz:</p>
+                    <p>Kura Sonucun</p>
                 </div>
                 <div class="result-section" style="display: block;">
                     <h3>🎁 Hediye Alacağınız Kişi:</h3>
@@ -124,11 +123,13 @@
                 </div>
                 <button onclick="logout()" class="btn-secondary" style="margin-top: 20px; width: 100%;">Çıkış Yap</button>
             </div>
+
+
         </section>
 
-        <footer>
+        <footer style="justify-content: center; flex-direction: column; gap: 10px; text-align: center;">
             <div class="footer">
-                <p>&copy; 2025 Yılbaşı Kura Çekilişi. Tüm Hakları Saklıdır.</p>
+                <p>&copy; 2025 Çekiliş Uygulaması -by Ümit TOPUZ. Tüm Hakları Saklıdır.</p>
             </div>
             <div class="social">
                 <a href="#"><i class="fa-brands fa-linkedin"></i></a>
@@ -149,6 +150,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
     <!-- Firebase Config -->
     <script src="js/firebase-config.js"></script>
