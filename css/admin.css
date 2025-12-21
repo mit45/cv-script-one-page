@@ -21,6 +21,7 @@ header nav a:hover {
 
 .admin-section {
     padding: 20px;
+    padding-top: 100px; /* Added padding to push content below fixed header */
     display: flex;
     flex-direction: column;
 }
@@ -77,6 +78,29 @@ header nav a:hover {
 }
 
 /* Buttons */
+.btn-primary {
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
 .btn-success {
     padding: 12px 25px;
     background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
@@ -351,7 +375,8 @@ header nav a:hover {
     font-size: 0.95em;
 }
 
-.login-container input {
+.admin-form input,
+.admin-form textarea {
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 15px;
@@ -360,13 +385,21 @@ header nav a:hover {
     transition: all 0.3s ease;
     width: 100%;
     font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
 }
 
-.login-container input:focus {
+.admin-form input:focus,
+.admin-form textarea:focus {
     border-color: #667eea;
     box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
     background: rgba(0, 0, 0, 0.4);
     outline: none;
+}
+
+.admin-form input::placeholder,
+.admin-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .login-container button {
@@ -455,20 +488,24 @@ header nav a:hover {
 
     .event-card {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 15px;
+        text-align: center;
     }
 
     .event-actions {
         width: 100%;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
     }
 
     .event-actions button,
     .event-actions a {
-        width: 100%;
-        text-align: center;
-        margin-left: 0 !important;
+        width: 45px !important;
+        height: 45px !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 }
 
@@ -528,23 +565,431 @@ header nav a:hover {
 
 /* Responsive Design for Login Page */
 @media (max-width: 900px) {
+    .admin-section {
+        padding-top: 80px;
+        min-height: 100vh;
+    }
+
     .login-page-wrapper {
-        flex-direction: column;
+        display: flex;
+        flex-direction: column !important;
         text-align: center;
-        gap: 40px;
-        padding-top: 40px;
+        gap: 20px;
+        padding-top: 20px;
+        min-height: auto;
+        padding-bottom: 40px;
+        justify-content: center;
     }
 
-    .intro-section {
-        text-align: center;
-    }
-
-    .intro-section h1 {
-        font-size: 3rem;
-    }
-    
     .login-page-wrapper .login-container {
         width: 100%;
         max-width: 100%;
+        flex: 0 0 auto;
+        order: 1;
+        margin-bottom: 20px;
+    }
+
+    .login-page-wrapper .intro-section {
+        text-align: center;
+        padding-right: 0;
+        order: 2;
+    }
+
+    .intro-section h1 {
+        font-size: 2rem;
+    }
+
+    /* Compact view for mobile */
+    .login-container {
+        padding: 20px !important;
+        margin-bottom: 20px;
+    }
+
+    .login-header {
+        margin-bottom: 15px !important;
+    }
+
+    .login-icon {
+        font-size: 2.5em !important;
+        margin-bottom: 10px !important;
+    }
+
+    .login-header h2 {
+        font-size: 1.5em !important;
+        margin-bottom: 5px !important;
+    }
+
+    .admin-form {
+        gap: 8px !important;
+    }
+
+    .admin-form .form-group {
+        gap: 4px !important;
+    }
+
+    .login-container input {
+        padding: 10px !important;
+    }
+
+    .login-container button {
+        padding: 10px !important;
+        margin-top: 10px !important;
+    }
+
+    .form-footer {
+        margin-top: 10px !important;
     }
 }
+
+/* Google Button & Separator */
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 15px 0;
+    color: rgba(255,255,255,0.5);
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.separator span {
+    padding: 0 10px;
+    font-size: 0.9em;
+}
+
+.btn-google {
+    background: white !important;
+    color: #333 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-google:hover {
+    background: #f1f1f1 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-google i {
+    color: #DB4437;
+}
+
+/* Top User Header Styles */
+.user-header-top {
+    position: absolute; /* Changed from fixed to absolute so it scrolls with the page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    z-index: 1000;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.user-header-top .header-left, 
+.user-header-top .header-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.user-header-top .header-right {
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.user-header-top .header-center {
+    flex: 1;
+    text-align: center;
+    padding: 0 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-header-top .profile-icon {
+    font-size: 3.5em;
+    color: #a3bffa;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.user-header-top .profile-icon:hover {
+    transform: scale(1.1);
+    color: #fff;
+}
+
+.user-header-top #adminWelcomeMsg {
+    margin: 0;
+    font-size: 1.5em;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Icon Buttons (Home & Logout) */
+.btn-icon {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0; /* Ensure no padding interferes with centering */
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Logout Button Specifics */
+.btn-logout {
+    background-color: #dc3545; /* Red background for logout */
+    border-color: #dc3545;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
+
+/* Mobile Adjustments for Header */
+@media (max-width: 768px) {
+    .user-header-top {
+        padding: 10px 15px !important;
+        height: auto !important;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            "left right"
+            "center center";
+        gap: 10px;
+        background: rgba(0,0,0,0.2); /* Optional visibility aid */
+    }
+
+    .user-header-top .header-left {
+        grid-area: left;
+        justify-self: start;
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    .user-header-top .header-right {
+        grid-area: right;
+        justify-self: end;
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    .user-header-top .header-center {
+        grid-area: center;
+        width: 100% !important;
+        text-align: center !important;
+        padding: 0 !important;
+        white-space: normal !important;
+        overflow: visible !important;
+    }
+    
+    .user-header-top #adminWelcomeMsg {
+        font-size: 1.1em;
+        display: inline-block;
+    }
+    
+    .user-header-top .profile-icon {
+        font-size: 2.5em;
+    }
+    
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1em;
+    }
+
+    /* Share Modal Bottom Sheet */
+    .share-modal-overlay {
+        align-items: flex-end; /* Align to bottom on mobile */
+    }
+
+    .share-modal {
+        border-radius: 20px 20px 0 0;
+        margin: 0;
+        max-width: 100%;
+        padding-bottom: 40px; /* Safe area for bottom */
+    }
+}
+
+/* Default Header Styling (Login Screen) */
+#defaultHeader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: transparent;
+    border: none;
+    padding: 0 30px; /* Match user header padding */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#defaultHeader nav {
+    justify-content: flex-end; /* Ensure icon is on the right */
+    width: 100%;
+}
+
+
+
+/* Share Modal Styles */
+.share-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center vertically on desktop */
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.share-modal {
+    background: #1a1a1a;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: slideUp 0.3s ease-out;
+}
+
+.share-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.share-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.close-share-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.close-share-btn:hover {
+    color: white;
+}
+
+.share-options {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    gap: 10px;
+}
+
+.share-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.85em;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+
+.share-option:hover {
+    transform: translateY(-3px);
+    color: white;
+}
+
+.share-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    color: white;
+}
+
+.share-icon.whatsapp { background: #25D366; }
+.share-icon.facebook { background: #1877F2; }
+.share-icon.twitter { background: #000000; border: 1px solid rgba(255,255,255,0.2); }
+.share-icon.email { background: #757575; }
+
+.share-link-container {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.share-link-container input {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    padding: 10px 15px;
+    flex: 1;
+    font-size: 0.9em;
+    outline: none;
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
+.share-link-container .copy-btn {
+    background: #3ea6ff;
+    color: black;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background 0.2s;
+}
+
+.share-link-container .copy-btn:hover {
+    background: #60b5ff;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+

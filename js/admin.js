@@ -13,34 +13,66 @@ auth.onAuthStateChanged((user) => {
 });
 
 function handleAuthState(user) {
+    console.log("handleAuthState called", user);
     const loginSection = document.getElementById('adminLoginSection');
     const adminPanelSection = document.getElementById('adminPanelSection');
     const userPanelSection = document.getElementById('userPanelSection');
+    
+    // Headers
+    const defaultHeader = document.getElementById('defaultHeader');
+    const userHeader = document.getElementById('userHeader');
 
-    if (!loginSection || !adminPanelSection || !userPanelSection) return;
+    if (!loginSection || !adminPanelSection || !userPanelSection) {
+        console.error("Missing sections in DOM", { loginSection, adminPanelSection, userPanelSection });
+        return;
+    }
 
     if (user) {
+        console.log("User is logged in, switching views");
         // Kullanıcı giriş yapmış
         document.body.style.overflowY = 'auto';
         loginSection.style.display = 'none';
         
-        // Herkes hem organizatör hem katılımcı olabilir
-        // Ancak arayüzde karışıklık olmaması için şimdilik:
-        // - Admin Paneli (Organizatör)
-        // - Üye Paneli (Katılımcı)
-        // ayrımını koruyoruz ama herkes Admin Paneline erişebilir yapıyoruz.
+        // Header değişimi
+        if (defaultHeader) defaultHeader.style.display = 'none';
+        if (userHeader) userHeader.style.display = '';
+
+        // Kullanıcı Yönetimi Butonu Kontrolü
+        const userManagementBtn = document.getElementById('userManagementBtn');
+        if (userManagementBtn) {
+            if (user.email === 'umittopuzg@gmail.com') {
+                userManagementBtn.style.display = 'flex';
+            } else {
+                userManagementBtn.style.display = 'none';
+            }
+        }
         
         // Şimdilik basitlik adına: Herkes Admin Paneline erişsin ve kendi etkinliklerini yönetsin
         adminPanelSection.style.display = 'block';
         userPanelSection.style.display = 'none'; // Üye panelini gizle, herkes yönetici
         
+        // Hoşgeldin mesajını güncelle
+        const welcomeMsg = document.getElementById('adminWelcomeMsg');
+        if (welcomeMsg) {
+            const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Kullanıcı');
+            // İlk harfi büyük yap
+            const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+            welcomeMsg.textContent = `Hoşgeldiniz, ${formattedName}`;
+        }
+
         loadMyEvents();
     } else {
+        console.log("User is logged out, showing login");
         // Kullanıcı çıkış yapmış
         document.body.style.overflowY = 'hidden';
-        loginSection.style.display = 'block';
+        loginSection.style.display = 'flex';
         adminPanelSection.style.display = 'none';
         userPanelSection.style.display = 'none';
+        
+        // Header değişimi
+        if (defaultHeader) defaultHeader.style.display = ''; // Flex veya block, CSS'e bağlı ama genelde flex
+        if (userHeader) userHeader.style.display = 'none';
+
         // Formu sıfırla
         toggleForms('login');
     }
@@ -68,18 +100,76 @@ async function loadMyEvents() {
                 <small>Oluşturulma: ${new Date(event.createdAt).toLocaleDateString('tr-TR')}</small>
             </div>
             <div class="event-actions">
-                <button onclick="manageEvent('${event.id}', '${event.name}')" class="btn-primary" style="padding: 8px 15px; font-size: 0.9em;">
-                    <i class="fa-solid fa-cog"></i> Yönet
+                <button onclick="manageEvent('${event.id}', '${event.name}')" class="btn-icon btn-primary" title="Yönet">
+                    <i class="fa-solid fa-cog"></i>
                 </button>
-                <a href="draw.html?id=${event.id}" target="_blank" class="btn-success" style="padding: 8px 15px; font-size: 0.9em; text-decoration: none; display: inline-block;">
-                    <i class="fa-solid fa-play"></i> Kura Sayfası
+                <a href="draw.html?id=${event.id}" target="_blank" class="btn-icon btn-success" title="Kura Sayfası">
+                    <i class="fa-solid fa-play"></i>
                 </a>
-                <button onclick="deleteEventConfirm('${event.id}', '${event.name}')" class="btn-delete">
-                    <i class="fa-solid fa-trash"></i> Sil
+                <button onclick="shareEventLink('${event.id}')" class="btn-icon btn-info" title="Linki Paylaş">
+                    <i class="fa-solid fa-share-nodes"></i>
+                </button>
+                <button onclick="deleteEventConfirm('${event.id}', '${event.name}')" class="btn-icon btn-delete" title="Sil">
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
         </div>
     `).join('');
+}
+
+// Link Paylaşma
+function shareEventLink(eventId) {
+    const url = `${window.location.origin}/draw.html?id=${eventId}`;
+    const modal = document.getElementById('shareModal');
+    const input = document.getElementById('shareLinkInput');
+    
+    // Set URL to input
+    input.value = url;
+    
+    // Update Social Links
+    document.getElementById('shareWhatsapp').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(url)}`;
+    document.getElementById('shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=Kura Çekilişine Katıl!`;
+    document.getElementById('shareEmail').href = `mailto:?subject=Kura Çekilişi Daveti&body=Merhaba, seni kura çekilişine davet ediyorum: ${url}`;
+
+    // Show Modal
+    modal.style.display = 'flex';
+}
+
+function closeShareModal() {
+    document.getElementById('shareModal').style.display = 'none';
+}
+
+function copyShareLink() {
+    const input = document.getElementById('shareLinkInput');
+    input.select();
+    input.setSelectionRange(0, 99999); // For mobile devices
+
+    navigator.clipboard.writeText(input.value).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.textContent;
+        
+        btn.textContent = 'Kopyalandı!';
+        btn.style.background = '#4CAF50';
+        btn.style.color = 'white';
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '#3ea6ff';
+            btn.style.color = 'black';
+        }, 2000);
+    }).catch(err => {
+        console.error('Link kopyalanamadı:', err);
+        alert('Link kopyalanamadı. Lütfen manuel kopyalayın.');
+    });
+}
+
+// Modal dışına tıklayınca kapatma
+window.onclick = function(event) {
+    const modal = document.getElementById('shareModal');
+    if (event.target == modal) {
+        closeShareModal();
+    }
 }
 
 // Etkinlik Silme Onayı
@@ -149,8 +239,6 @@ function showEventsList() {
 }
 
 // Formlar arası geçiş
-
-// Formlar arası geçiş
 function toggleForms(formType) {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
@@ -194,10 +282,13 @@ async function registerUser() {
             displayName: name
         });
 
-        // Veritabanına kullanıcıyı ekle (İsteğe bağlı ama önerilir)
-        // Not: Kura sistemi 'participants' tablosunu kullanıyor. 
-        // Eğer kayıt olan kişi kuraya katılacaksa buraya da ekleyebiliriz.
-        // Şimdilik sadece Auth profilini güncelliyoruz.
+        // Veritabanına kullanıcıyı ekle
+        await database.ref('users/' + user.uid).set({
+            name: name,
+            email: email,
+            createdAt: new Date().toISOString(),
+            role: 'user' // Varsayılan rol
+        });
 
         showMessage(messageEl, 'Kayıt başarılı! Yönlendiriliyorsunuz...', 'success');
         // onAuthStateChanged otomatik tetiklenecek
@@ -215,55 +306,45 @@ async function registerUser() {
     }
 }
 
-// Normal Üye Verilerini Yükle
-async function loadUserData(user) {
-    const userNameDisplay = document.getElementById('userNameDisplay');
-    const userDrawResult = document.getElementById('userDrawResult');
-    
-    // İsim gösterimi: Varsa displayName, yoksa email'in baş kısmı
-    if (userNameDisplay) {
-        if (user.displayName) {
-            userNameDisplay.textContent = user.displayName;
-        } else {
-            // Email'den isim türetme (örn: ahmet@gmail.com -> Ahmet)
-            const nameFromEmail = user.email.split('@')[0];
-            userNameDisplay.textContent = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
-        }
-    }
 
-    // Kura sonucunu kontrol et
-    try {
-        const draws = await getDraws();
-        // Kullanıcının ismiyle eşleşen kura sonucunu bul
-        // Not: İsim eşleşmesi hassas olabilir, ileride ID bazlı yapılabilir.
-        const myDraw = draws.find(d => d.user === user.displayName);
-
-        if (myDraw) {
-            userDrawResult.innerHTML = `
-                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-top: 10px;">
-                    <p style="margin-bottom: 10px; color: rgba(255,255,255,0.8);">Hediye Alacağın Kişi:</p>
-                    <h2 style="color: #667eea; font-size: 2em; margin: 0;">${myDraw.recipient}</h2>
-                    <p style="margin-top: 15px; font-size: 0.9em; color: rgba(255,255,255,0.6);">
-                        <i class="fa-solid fa-calendar"></i> Çekiliş Tarihi: ${new Date(myDraw.date).toLocaleDateString('tr-TR')}
-                    </p>
-                </div>
-            `;
-        } else {
-            userDrawResult.innerHTML = `
-                <div style="padding: 20px; color: rgba(255,255,255,0.6);">
-                    <i class="fa-solid fa-hourglass-half" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>
-                    <p>Henüz kura çekmediniz veya adınıza bir sonuç bulunamadı.</p>
-                    <p style="font-size: 0.8em; margin-top: 10px;">(Kayıt olduğunuz isim ile kura listesindeki ismin birebir aynı olduğundan emin olun)</p>
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error("Kura sonucu hatası:", error);
-        userDrawResult.textContent = "Bilgiler yüklenirken hata oluştu.";
-    }
-}
 
 // Admin girişi
+
+// Google ile Giriş
+async function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const messageEl = document.getElementById('adminLoginMessage') || document.getElementById('registerMessage');
+
+    try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        
+        showMessage(messageEl, `Hoşgeldin ${user.displayName}! Yönlendiriliyorsunuz...`, 'success');
+        
+        // Manuel tetikleme
+        setTimeout(() => {
+            if (auth.currentUser) {
+                handleAuthState(auth.currentUser);
+            }
+        }, 1000);
+
+    } catch (error) {
+        console.error("Google giriş hatası:", error);
+        let errorMessage = 'Google ile giriş yapılamadı!';
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+            errorMessage = 'Giriş penceresi kapatıldı.';
+        } else if (error.code === 'auth/cancelled-popup-request') {
+            errorMessage = 'İstek iptal edildi.';
+        } else if (error.code === 'auth/popup-blocked') {
+            errorMessage = 'Tarayıcı pencereyi engelledi. Lütfen izin verin.';
+        } else if (error.code === 'auth/operation-not-allowed') {
+            errorMessage = 'Google girişi henüz aktif edilmemiş. Lütfen yönetici ile iletişime geçin.';
+        }
+        
+        showMessage(messageEl, errorMessage, 'error');
+    }
+}
 
 // Admin girişi
 async function adminLogin() {
@@ -279,6 +360,14 @@ async function adminLogin() {
     try {
         await auth.signInWithEmailAndPassword(email, password);
         showMessage(messageEl, 'Giriş başarılı, yönlendiriliyorsunuz...', 'success');
+
+        // Manuel tetikleme (Eğer listener çalışmazsa diye)
+        setTimeout(() => {
+            if (auth.currentUser) {
+                console.log("Manual auth check triggered");
+                handleAuthState(auth.currentUser);
+            }
+        }, 1000);
     } catch (error) {
         console.error("Giriş hatası:", error);
         let errorMessage = 'Giriş başarısız!';
@@ -292,8 +381,15 @@ async function adminLogin() {
 }
 
 // Çıkış yap
-function adminLogout() {
-    auth.signOut();
+async function adminLogout() {
+    try {
+        await auth.signOut();
+        // Sayfayı yenile ki cache veya state kalmasın
+        window.location.reload();
+    } catch (error) {
+        console.error("Çıkış hatası:", error);
+        alert("Çıkış yapılırken bir hata oluştu.");
+    }
 }
 
 // Admin verilerini yükle
@@ -435,7 +531,7 @@ async function updateParticipantsList() {
     if (participants.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">
+                <td colspan="4" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">
                     Henüz katılımcı eklenmemiş
                 </td>
             </tr>
@@ -445,15 +541,14 @@ async function updateParticipantsList() {
 
     tbody.innerHTML = participants.map((p, index) => {
         const hasDraw = draws.find(d => d.user === p.name);
-        const hasPassword = p.password ? '✓' : '✗';
-        const drawStatus = hasDraw ? '✓ Çekti' : '✗ Çekmedi';
-        const recipient = hasDraw ? hasDraw.recipient : '-';
+        const drawStatus = hasDraw 
+            ? '<i class="fa-solid fa-check" style="color: #4CAF50; font-size: 1.2em;"></i>' 
+            : '<i class="fa-solid fa-xmark" style="color: #f44336; font-size: 1.2em;"></i>';
         
         return `
             <tr>
                 <td>${index + 1}</td>
                 <td>${p.name}</td>
-                <td>${hasPassword}</td>
                 <td>${drawStatus}</td>
                 <td>
                     <button onclick="deleteParticipantFromDB('${p.id}')" class="btn-delete" title="Sil">
@@ -475,7 +570,7 @@ async function updateDrawResults() {
     if (draws.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="4" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">
+                <td colspan="3" style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">
                     Henüz kura çekilmemiş
                 </td>
             </tr>
@@ -487,10 +582,9 @@ async function updateDrawResults() {
         const date = new Date(d.date).toLocaleString('tr-TR');
         return `
             <tr>
-                <td>${index + 1}</td>
                 <td>${d.user}</td>
-                <td>${d.recipient}</td>
                 <td>${d.selectedNumber}</td>
+                <td>${d.recipient}</td>
             </tr>
         `;
     }).join('');
@@ -516,50 +610,7 @@ async function updateStats() {
     if (passwordEl) passwordEl.textContent = withPassword;
 }
 
-// Toplu katılımcı ekleme
-async function bulkAddParticipants() {
-    const textarea = document.getElementById('bulkNames');
-    const names = textarea.value.split('\n')
-        .map(name => name.trim())
-        .filter(name => name.length > 0);
 
-    const messageEl = document.getElementById('bulkMessage');
-
-    if (names.length === 0) {
-        showMessage(messageEl, 'Lütfen en az bir isim girin!', 'error');
-        return;
-    }
-
-    let addedCount = 0;
-    let skippedCount = 0;
-
-    for (const name of names) {
-        const existingParticipant = await findParticipantByName(name, currentEventId);
-        
-        if (!existingParticipant) {
-            const participant = {
-                name: name,
-                password: null,
-                createdAt: new Date().toISOString()
-            };
-            
-            const success = await addParticipant(participant, currentEventId);
-            if (success) {
-                addedCount++;
-            }
-        } else {
-            skippedCount++;
-        }
-    }
-
-    textarea.value = '';
-    showMessage(messageEl, 
-        `${addedCount} katılımcı eklendi. ${skippedCount > 0 ? skippedCount + ' zaten vardı.' : ''}`, 
-        'success'
-    );
-    
-    await loadAdminData();
-}
 
 // Tüm verileri sıfırla
 async function clearAllData() {
@@ -640,16 +691,7 @@ async function exportData() {
     }
 }
 
-// Admin çıkış
-function adminLogout() {
-    // Listener'ları kapat
-    offParticipantsChange();
-    offDrawsChange();
-    
-    document.getElementById('adminPanelSection').style.display = 'none';
-    document.getElementById('adminLoginSection').style.display = 'block';
-    document.getElementById('adminPassword').value = '';
-}
+
 
 // Enter tuşu ile giriş
 document.addEventListener('DOMContentLoaded', function() {
@@ -674,4 +716,238 @@ function showMessage(element, text, type) {
     setTimeout(() => {
         element.style.display = 'none';
     }, 3000);
+}
+
+// --- Profil Yönetimi ---
+
+// Profili Aç
+async function openProfile() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    // Panelleri yönet
+    document.getElementById('adminPanelSection').style.display = 'none';
+    document.getElementById('profileSection').style.display = 'block';
+
+    // Temel bilgileri doldur
+    document.getElementById('profileName').value = user.displayName || '';
+    
+    // Ek bilgileri veritabanından çek
+    try {
+        const snapshot = await database.ref('users/' + user.uid).once('value');
+        const userData = snapshot.val();
+        
+        if (userData) {
+            if (userData.birthDate) document.getElementById('profileBirthDate').value = userData.birthDate;
+            if (userData.profession) document.getElementById('profileProfession').value = userData.profession;
+        }
+    } catch (error) {
+        console.error("Kullanıcı detayları alınamadı:", error);
+    }
+}
+
+// Profili Kapat
+function closeProfile() {
+    document.getElementById('profileSection').style.display = 'none';
+    document.getElementById('adminPanelSection').style.display = 'block';
+    
+    // Formu temizle (şifre alanlarını)
+    document.getElementById('profileNewPass').value = '';
+    document.getElementById('profileConfirmPass').value = '';
+    document.getElementById('profileMessage').style.display = 'none';
+}
+
+// Profili Kaydet
+async function saveUserProfile() {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const name = document.getElementById('profileName').value;
+    const birthDate = document.getElementById('profileBirthDate').value;
+    const profession = document.getElementById('profileProfession').value;
+    const newPass = document.getElementById('profileNewPass').value;
+    const confirmPass = document.getElementById('profileConfirmPass').value;
+    const messageEl = document.getElementById('profileMessage');
+
+    if (!name) {
+        showMessage(messageEl, 'Ad Soyad alanı boş bırakılamaz!', 'error');
+        return;
+    }
+
+    showMessage(messageEl, 'Kaydediliyor...', 'info');
+
+    try {
+        // 1. Temel Profil Güncellemesi (Auth)
+        if (user.displayName !== name) {
+            await user.updateProfile({ displayName: name });
+            // Header'daki ismi güncelle
+            const welcomeMsg = document.getElementById('adminWelcomeMsg');
+            if (welcomeMsg) {
+                const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+                welcomeMsg.textContent = `Hoşgeldiniz, ${formattedName}`;
+            }
+        }
+
+        // 2. Ek Bilgilerin Güncellenmesi (Database)
+        await database.ref('users/' + user.uid).update({
+            birthDate: birthDate,
+            profession: profession,
+            updatedAt: new Date().toISOString()
+        });
+
+        // 3. Şifre Güncellemesi (Eğer girildiyse)
+        if (newPass) {
+            if (newPass.length < 6) {
+                showMessage(messageEl, 'Yeni şifre en az 6 karakter olmalıdır!', 'error');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showMessage(messageEl, 'Şifreler eşleşmiyor!', 'error');
+                return;
+            }
+            
+            await user.updatePassword(newPass);
+            showMessage(messageEl, 'Profil ve şifre başarıyla güncellendi!', 'success');
+        } else {
+            showMessage(messageEl, 'Profil başarıyla güncellendi!', 'success');
+        }
+
+        // Kısa bir süre sonra paneli kapat
+        setTimeout(() => {
+            closeProfile();
+        }, 1500);
+
+    } catch (error) {
+        console.error("Profil güncelleme hatası:", error);
+        let errorMessage = 'Güncelleme sırasında hata oluştu!';
+        
+        if (error.code === 'auth/requires-recent-login') {
+            errorMessage = 'Güvenlik gereği şifre değiştirmek için yeniden giriş yapmalısınız.';
+        }
+        
+        showMessage(messageEl, errorMessage, 'error');
+    }
+}
+
+// --- Kullanıcı Yönetimi ---
+
+function openUserManagement() {
+    const user = auth.currentUser;
+    if (!user || user.email !== 'umittopuzg@gmail.com') {
+        alert('Bu alana erişim yetkiniz yok.');
+        return;
+    }
+
+    // Diğer bölümleri gizle
+    document.getElementById('adminPanelSection').style.display = 'none';
+    document.getElementById('profileSection').style.display = 'none';
+    
+    // Kullanıcı yönetimi bölümünü göster
+    const section = document.getElementById('userManagementSection');
+    if (section) {
+        section.style.display = 'block';
+        fetchAllUsers();
+    } else {
+        console.error("User Management Section not found!");
+    }
+}
+
+function closeUserManagement() {
+    document.getElementById('userManagementSection').style.display = 'none';
+    document.getElementById('adminPanelSection').style.display = 'block';
+}
+
+async function fetchAllUsers() {
+    const listEl = document.getElementById('allUsersList');
+    listEl.innerHTML = '<tr><td colspan="5" style="text-align:center;">Yükleniyor...</td></tr>';
+
+    try {
+        const snapshot = await database.ref('users').once('value');
+        const users = snapshot.val();
+
+        if (!users) {
+            listEl.innerHTML = '<tr><td colspan="5" style="text-align:center;">Kayıtlı kullanıcı bulunamadı.</td></tr>';
+            return;
+        }
+
+        listEl.innerHTML = '';
+        Object.entries(users).forEach(([uid, user]) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.name || 'İsimsiz'}</td>
+                <td>${user.email || '-'}</td>
+                <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString('tr-TR') : '-'}</td>
+                <td>${user.role || 'User'}</td>
+                <td>
+                    <button onclick="viewUserEvents('${uid}', '${user.name}')" class="btn-icon btn-info" title="Etkinlikleri Gör">
+                        <i class="fa-solid fa-list"></i>
+                    </button>
+                    <button onclick="editUser('${uid}', '${user.name}')" class="btn-icon btn-primary" title="Düzenle">
+                        <i class="fa-solid fa-edit"></i>
+                    </button>
+                </td>
+            `;
+            listEl.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Kullanıcılar getirilemedi:", error);
+        listEl.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Hata oluştu!</td></tr>';
+    }
+}
+
+async function viewUserEvents(userId, userName) {
+    const modal = document.getElementById('userEventsModal');
+    const listEl = document.getElementById('userEventsList');
+    const titleEl = document.getElementById('userEventsTitle');
+
+    titleEl.textContent = `${userName} - Etkinlikleri`;
+    listEl.innerHTML = '<div style="text-align:center;">Yükleniyor...</div>';
+    modal.style.display = 'flex';
+
+    try {
+        const events = await getUserEvents(userId);
+        
+        if (events.length === 0) {
+            listEl.innerHTML = '<div style="text-align:center;">Bu kullanıcının etkinliği yok.</div>';
+            return;
+        }
+
+        listEl.innerHTML = events.map(event => `
+            <div class="admin-box event-card">
+                <div class="event-info">
+                    <h4>${event.name}</h4>
+                    <small>Oluşturulma: ${new Date(event.createdAt).toLocaleDateString('tr-TR')}</small>
+                </div>
+                <div class="event-actions">
+                    <a href="draw.html?id=${event.id}" target="_blank" class="btn-icon btn-success" title="Kura Sayfası">
+                        <i class="fa-solid fa-play"></i>
+                    </a>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error("Kullanıcı etkinlikleri alınamadı:", error);
+        listEl.innerHTML = '<div style="text-align:center; color:red;">Hata oluştu!</div>';
+    }
+}
+
+function closeUserEventsModal() {
+    document.getElementById('userEventsModal').style.display = 'none';
+}
+
+async function editUser(userId, currentName) {
+    const newName = prompt("Kullanıcının yeni ismini girin:", currentName);
+    if (newName && newName !== currentName) {
+        try {
+            await database.ref('users/' + userId).update({
+                name: newName
+            });
+            alert("Kullanıcı bilgileri güncellendi.");
+            fetchAllUsers(); // Listeyi yenile
+        } catch (error) {
+            console.error("Güncelleme hatası:", error);
+            alert("Güncelleme başarısız!");
+        }
+    }
 }

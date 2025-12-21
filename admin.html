@@ -15,20 +15,37 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/draw.css">
     <link rel="stylesheet" href="css/admin.css">
 
 </head>
 
 <body>
     <div class="container">
-        <header>
+        <header id="defaultHeader">
             <div class="logo">
                 <!-- Logo Text Removed -->
             </div>
             <nav>
-                <a href="index.html" title="Anasayfa"><i class="fa-solid fa-home"></i></a>
+                <a href="index.html" class="btn-icon" title="Anasayfa"><i class="fa-solid fa-home"></i></a>
             </nav>
+        </header>
+
+        <header id="userHeader" style="display: none;" class="user-header-top">
+            <div class="header-left">
+                <i class="fa-solid fa-circle-user profile-icon" title="Profil Ayarları" onclick="openProfile()"></i>
+            </div>
+            <div class="header-center">
+                <h2 id="adminWelcomeMsg">Hoşgeldiniz</h2>
+            </div>
+            <div class="header-right">
+                <button id="userManagementBtn" onclick="openUserManagement()" class="btn-icon" title="Kullanıcı Yönetimi" style="margin-right: 10px; display: none;">
+                    <i class="fa-solid fa-users-gear"></i>
+                </button>
+                <a href="index.html" class="btn-icon" title="Anasayfa"><i class="fa-solid fa-home"></i></a>
+                <button onclick="adminLogout()" class="btn-icon btn-logout" title="Çıkış Yap">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                </button>
+            </div>
         </header>
 
         <section class="admin-section">
@@ -64,6 +81,8 @@
                             <input type="password" id="adminPassword" placeholder="Şifrenizi girin" required>
                         </div>
                         <button onclick="adminLogin()" class="btn-primary">Giriş Yap</button>
+                        <div class="separator"><span>veya</span></div>
+                        <button onclick="signInWithGoogle()" class="btn-google"><i class="fa-brands fa-google"></i> Google ile Giriş Yap</button>
                         <div class="form-footer">
                             <a href="#" onclick="toggleForms('register')" class="login-link">Hesabın yok mu? Kaydol</a>
                         </div>
@@ -85,6 +104,8 @@
                             <input type="password" id="regPassword" placeholder="Şifre belirleyin (en az 6 karakter)" required>
                         </div>
                         <button onclick="registerUser()" class="btn-success">Kaydol</button>
+                        <div class="separator"><span>veya</span></div>
+                        <button onclick="signInWithGoogle()" class="btn-google"><i class="fa-brands fa-google"></i> Google ile Kaydol</button>
                         <div class="form-footer">
                             <a href="#" onclick="toggleForms('login')" class="login-link">Zaten hesabın var mı? Giriş Yap</a>
                         </div>
@@ -110,13 +131,101 @@
                 </div>
             </div>
 
+            <!-- User Management Section -->
+            <div class="admin-container" id="userManagementSection" style="display: none;">
+                <div class="admin-header-controls">
+                    <h2><i class="fa-solid fa-users-gear"></i> Kullanıcı Yönetimi</h2>
+                    <button onclick="closeUserManagement()" class="btn-secondary" style="padding: 8px 15px;">
+                        <i class="fa-solid fa-times"></i> Kapat
+                    </button>
+                </div>
+
+                <div class="admin-box">
+                    <div class="table-container">
+                        <table class="participants-table">
+                            <thead>
+                                <tr>
+                                    <th>Ad Soyad</th>
+                                    <th>E-posta</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>Rol</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allUsersList">
+                                <!-- JS ile doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Events Modal -->
+            <div id="userEventsModal" class="share-modal-overlay" style="display: none;">
+                <div class="share-modal" style="max-width: 600px;">
+                    <div class="share-header">
+                        <h3 id="userEventsTitle">Kullanıcı Etkinlikleri</h3>
+                        <button onclick="closeUserEventsModal()" class="close-share-btn"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                    <div id="userEventsList" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                        <!-- JS ile doldurulacak -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Settings Section -->
+            <div class="admin-container" id="profileSection" style="display: none;">
+                <div class="admin-header-controls">
+                    <h2><i class="fa-solid fa-user-gear"></i> Profil Ayarları</h2>
+                    <button onclick="closeProfile()" class="btn-secondary" style="padding: 8px 15px;">
+                        <i class="fa-solid fa-times"></i> Kapat
+                    </button>
+                </div>
+
+                <div class="admin-box">
+                    <div class="admin-form">
+                        <div class="form-group">
+                            <label for="profileName">Ad Soyad:</label>
+                            <input type="text" id="profileName" placeholder="Adınız ve Soyadınız">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profileBirthDate">Doğum Tarihi:</label>
+                            <input type="date" id="profileBirthDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileProfession">Meslek:</label>
+                            <input type="text" id="profileProfession" placeholder="Mesleğiniz">
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+                        <h4 style="color: white; margin-bottom: 15px;">Şifre Değiştir (İsteğe Bağlı)</h4>
+
+                        <div class="form-group">
+                            <label for="profileNewPass">Yeni Şifre:</label>
+                            <input type="password" id="profileNewPass" placeholder="Yeni şifreniz (Değiştirmek istemiyorsanız boş bırakın)">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileConfirmPass">Yeni Şifre Tekrar:</label>
+                            <input type="password" id="profileConfirmPass" placeholder="Yeni şifrenizi tekrar girin">
+                        </div>
+
+                        <div class="control-buttons" style="margin-top: 20px;">
+                            <button onclick="saveUserProfile()" class="btn-success">
+                                <i class="fa-solid fa-save"></i> Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                        <div id="profileMessage" class="message"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Admin Panel (Sadece Admin İçin) -->
             <div class="admin-container" id="adminPanelSection" style="display: none;">
                 <div class="admin-header-controls">
                     <h2>Kura Yönetim Paneli</h2>
-                    <button onclick="adminLogout()" style="background-color: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;">
-                        <i class="fa-solid fa-sign-out-alt"></i> Çıkış Yap
-                    </button>
                 </div>
 
                 <!-- Events List & Create -->
@@ -157,7 +266,7 @@
                         <div class="admin-form">
                             <div class="form-group">
                                 <label for="participantNames">Ad Soyad Listesi:</label>
-                                <textarea id="participantNames" placeholder="Her satıra bir isim gelecek şekilde yazın&#10;Örnek:&#10;Ahmet Yılmaz&#10;Ayşe Demir" rows="5" style="width: 100%; padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); resize: vertical;"></textarea>
+                                <textarea id="participantNames" placeholder="Her satıra bir isim gelecek şekilde yazın&#10;Örnek:&#10;Ahmet Yılmaz&#10;Ayşe Demir" rows="5"></textarea>
                                 <small style="color: rgba(255,255,255,0.6); font-size: 0.9em;">Katılımcılar ilk girişlerinde kendi şifrelerini oluşturacaklar</small>
                             </div>
                             <button onclick="addParticipantsToFirebase()" class="btn-success">
@@ -194,7 +303,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Ad Soyad</th>
-                                        <th>Şifre Durumu</th>
                                         <th>Kura Durumu</th>
                                         <th>İşlemler</th>
                                     </tr>
@@ -258,6 +366,40 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
     <!-- Firebase Config -->
+    <!-- Share Modal -->
+    <div id="shareModal" class="share-modal-overlay" style="display: none;">
+        <div class="share-modal">
+            <div class="share-header">
+                <h3>Paylaş</h3>
+                <button onclick="closeShareModal()" class="close-share-btn"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div class="share-options">
+                <a href="#" id="shareWhatsapp" target="_blank" class="share-option">
+                    <div class="share-icon whatsapp"><i class="fa-brands fa-whatsapp"></i></div>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="#" id="shareFacebook" target="_blank" class="share-option">
+                    <div class="share-icon facebook"><i class="fa-brands fa-facebook-f"></i></div>
+                    <span>Facebook</span>
+                </a>
+                <a href="#" id="shareTwitter" target="_blank" class="share-option">
+                    <div class="share-icon twitter"><i class="fa-brands fa-x-twitter"></i></div>
+                    <span>X</span>
+                </a>
+                <a href="#" id="shareEmail" class="share-option">
+                    <div class="share-icon email"><i class="fa-solid fa-envelope"></i></div>
+                    <span>E-posta</span>
+                </a>
+            </div>
+
+            <div class="share-link-container">
+                <input type="text" id="shareLinkInput" readonly>
+                <button onclick="copyShareLink()" class="copy-btn">Kopyala</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/firebase-config.js"></script>
     
     <!-- App Scripts -->
