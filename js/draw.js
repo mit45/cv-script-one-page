@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <h3 style="color: white; margin-bottom: 10px; font-size: 1.5em;">Bağlantı Hatası</h3>
                         <p style="color: rgba(255,255,255,0.8); margin-bottom: 5px;">Bu sayfaya doğrudan erişilemez.</p>
                         <p style="color: rgba(255,255,255,0.8);">Lütfen organizatörün paylaştığı kura linkini kullanın.</p>
-                        <a href="admin.html" style="display: inline-block; margin-top: 25px; padding: 12px 30px; background: white; color: #764ba2; text-decoration: none; border-radius: 50px; font-weight: 600; transition: all 0.3s;">Admin Paneline Dön</a>
+                        <a href="cekilis-yonetim.html" style="display: inline-block; margin-top: 25px; padding: 12px 30px; background: white; color: #764ba2; text-decoration: none; border-radius: 50px; font-weight: 600; transition: all 0.3s;">Admin Paneline Dön</a>
                     </div>
                 </div>
              `;
@@ -463,3 +463,23 @@ document.addEventListener('keypress', function(e) {
         }
     }
 });
+
+// Arkadaşına Tavsiye Et
+function shareApp() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Çekiliş Uygulaması',
+            text: 'Harika bir çekiliş uygulaması buldum, sen de dene!',
+            url: window.location.href
+        })
+        .catch((error) => console.log('Paylaşım hatası:', error));
+    } else {
+        const dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = window.location.href;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        alert('Link kopyalandı! Arkadaşına gönderebilirsin.');
+    }
+}

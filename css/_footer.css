@@ -4,9 +4,52 @@ footer {
     align-items: center;
     justify-content: space-between;
     padding-top: 10px;
+    position: relative;
+    z-index: 10;
 }
 
 .social {
     display: flex;
     gap: 20px;
+}
+
+.social a {
+    color: white;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.social a:hover {
+    transform: scale(1.2);
+}
+
+/* Share Button */
+.recommend-btn-container {
+    margin-top: 15px;
+}
+
+.btn-share {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.btn-share:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btn-share i {
+    color: #e91e63;
 }

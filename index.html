@@ -28,7 +28,7 @@
                 <h1>Ümit TOPUZ</h1>
             </div>
             <nav class="header-right">
-                <a href="admin.html" class="draw-link" title="Çekiliş Uygulaması">
+                <a href="cekilis-yonetim.html" class="draw-link" title="Çekiliş Uygulaması">
                     <i class="fa-solid fa-gift"></i>
                 </a>
             </nav>
@@ -150,15 +150,35 @@
                 <p>&copy; 2025 Çekiliş Uygulaması -by Ümit TOPUZ. Tüm Hakları Saklıdır.</p>
             </div>
             <div class="social">
-                <a href="https://www.linkedin.com/in/umittopuzg" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://www.linkedin.com/in/umit-topuz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
                 <a href="https://github.com/mit45" target="_blank"><i class="fa-brands fa-github"></i></a>
-                <a href="https://www.facebook.com/umittopuzg" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-                <a href="https://www.instagram.com/umittopuzg" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://twitter.com/umittopuzg" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://www.youtube.com/@umittopuzg" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.facebook.com/umit.topuz45/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://www.instagram.com/mit45/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://x.com/mit45" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://www.youtube.com/@umittopuz" target="_blank"><i class="fa-brands fa-youtube"></i></a>
             </div>
         </footer>
     </div>
+    <script>
+        function shareApp() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Çekiliş Uygulaması',
+                    text: 'Harika bir çekiliş uygulaması buldum, sen de dene!',
+                    url: window.location.href
+                })
+                .catch((error) => console.log('Paylaşım hatası:', error));
+            } else {
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = window.location.href;
+                dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                alert('Link kopyalandı! Arkadaşına gönderebilirsin.');
+            }
+        }
+    </script>
 </body>
 
 </html>

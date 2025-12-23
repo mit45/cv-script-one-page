@@ -29,6 +29,10 @@ function handleAuthState(user) {
 
     if (user) {
         console.log("User is logged in, switching views");
+        
+        // Kullanıcı verilerini DB ile senkronize et (Eksik veri varsa tamamla)
+        syncUserData(user);
+
         // Kullanıcı giriş yapmış
         document.body.style.overflowY = 'auto';
         loginSection.style.display = 'none';
@@ -951,3 +955,55 @@ async function editUser(userId, currentName) {
         }
     }
 }
+
+// Kullanıcı verilerini DB ile senkronize et
+async function syncUserData(user) {
+    if (!user) return;
+    
+    try {
+        const userRef = database.ref('users/' + user.uid);
+        const snapshot = await userRef.once('value');
+        const userData = snapshot.val();
+        
+        // Eğer veri yoksa veya eksikse güncelle
+        if (!userData || !userData.email || !userData.name) {
+            console.log("Syncing user data for", user.email);
+            await userRef.update({
+                name: user.displayName || (user.email ? user.email.split('@')[0] : 'İsimsiz'),
+                email: user.email,
+                // Eğer createdAt yoksa yeni oluştur, varsa koru
+                createdAt: (userData && userData.createdAt) ? userData.createdAt : (user.metadata.creationTime || new Date().toISOString()),
+                role: (userData && userData.role) ? userData.role : 'user'
+            });
+            
+            // Eğer şu an kullanıcı listesi açıksa yenile
+            const userManagementSection = document.getElementById('userManagementSection');
+            if (userManagementSection && userManagementSection.style.display !== 'none') {
+                fetchAllUsers();
+            }
+        }
+    } catch (error) {
+        console.error("User sync error:", error);
+    }
+}
+
+// Arkada��na Tavsiye Et
+function shareApp() {
+    if (navigator.share) {
+        navigator.share({
+            title: '�ekili� Uygulamas�',
+            text: 'Harika bir �ekili� uygulamas� buldum, sen de dene!',
+            url: window.location.href
+        })
+        .catch((error) => console.log('Payla��m hatas�:', error));
+    } else {
+        const dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = window.location.href;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        alert('Link kopyaland�! Arkada��na g�nderebilirsin.');
+    }
+}
+
