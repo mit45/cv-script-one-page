@@ -6,6 +6,9 @@
 @import "./_section.css";
 @import "./_footer.css";
 
+* {
+    box-sizing: border-box;
+}
 
 body {
     background-image: url(../img/background.jpg);
@@ -16,17 +19,35 @@ body {
     width: 100%;
     font-family: 'Roboto Condensed', sans-serif;
     color: white;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-y: auto; /* Allow vertical scroll */
 }
 
 .container {
-    width: 94%;
+    width: 100%;
     max-width: 1150px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
+    padding: 0 15px;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-/* 
-
+/* @media only screen and (max-width: 1000px) {
+    .social {
+        text-align: center;
+    }
+    .container{
+        text-align: center;
+        margin-top: 0px;
+    }
+    .header-navbar{
+        flex-direction: column;
+    }
+    .header-text{
+        width: 80%;
+    }
+}
 
 @media only screen and (max-width: 700px){
     ul{

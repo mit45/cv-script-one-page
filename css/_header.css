@@ -4,71 +4,95 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 20px;
+    color: white;
+    position: relative;
 }
 
-.logo {
+.header-left {
+    flex: 1;
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    font-size: 35px;
-    letter-spacing: 10px;
-    font-family: 'WindSong', cursive;
 }
 
-.logo img {
-    width: 150px;
+.header-left img {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
 }
 
-/* nav {
+.header-center {
+    flex: 1;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.header-center h1 {
+    font-size: 36px;
+    letter-spacing: 2px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     gap: 20px;
 }
 
-nav a {
+.header-right a {
     padding: 10px;
-    border: 2px dashed;
-    border-radius: 10px;
-    border-color: white;
+    border: none;
+    font-size: 1.5em;
+    color: white;
+    transition: opacity 0.3s;
 }
 
-nav a:hover {
-    opacity: 0.5;
+.header-right a:hover {
+    opacity: 0.7;
     cursor: pointer;
-} */
+}
 
-@media only screen and (max-width: 485px) {
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
     header {
-        height: 15vh;
-        display: flex;
-        flex-direction: column;
+        height: auto;
+        padding: 15px 20px;
     }
 
-    .logo {
-        display: flex;
-        align-items: center;
-        font-size: 30px;
-        letter-spacing: 5px;
-        font-family: 'WindSong', cursive;
+    .header-left {
+        flex: 0 0 auto;
     }
 
-    .logo img {
-        width: 100px;
-    }/* 
-
-    nav {
-        display: flex;
-        gap: 20px;
+    .header-left img {
+        height: 60px;
     }
 
-    nav a {
-        padding: 10px;
-        border: 1px solid;
-        border-radius: 10px;
-        border-color: white;
+    .header-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        flex: none;
     }
 
-    nav a:hover {
-        opacity: 0.5;
-        cursor: pointer;
-    } */
+    .header-center h1 {
+        font-size: 20px;
+    }
 
+    .header-right {
+        flex: 0 0 auto;
+    }
+
+    .header-right a {
+        font-size: 1.4em;
+        padding: 5px;
+    }
 }

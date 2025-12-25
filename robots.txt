@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /cekilis-yonetim.html
+Disallow: /css/
+Disallow: /js/
+Disallow: /img/
+
+Sitemap: https://umittopuz.com/sitemap.xml

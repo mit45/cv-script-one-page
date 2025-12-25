@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yılbaşı Kura Çekilişi - Online Çekiliş Yap</title>
+    <meta name="description" content="Online Yılbaşı Kura Çekilişi uygulaması. Arkadaşlarınızla veya ailenizle kolayca kura çekin, hediyeleşmeyi eğlenceli hale getirin.">
+    <meta name="keywords" content="yılbaşı çekilişi, kura çek, online çekiliş, hediye çekilişi, yılbaşı kura, çekiliş yap">
+    <meta name="author" content="Ümit TOPUZ">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Yılbaşı Kura Çekilişi - Online Çekiliş Yap">
+    <meta property="og:description" content="Online Yılbaşı Kura Çekilişi uygulaması. Arkadaşlarınızla veya ailenizle kolayca kura çekin.">
+    <meta property="og:image" content="img/logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Yılbaşı Kura Çekilişi - Online Çekiliş Yap">
+    <meta property="twitter:description" content="Online Yılbaşı Kura Çekilişi uygulaması. Arkadaşlarınızla veya ailenizle kolayca kura çekin.">
+    <meta property="twitter:image" content="img/logo.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Yılbaşı Kura Çekilişi",
+      "url": "https://umittopuz.com/draw.html",
+      "description": "Online Yılbaşı Kura Çekilişi uygulaması. Arkadaşlarınızla veya ailenizle kolayca kura çekin.",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "All",
+      "author": {
+        "@type": "Person",
+        "name": "Ümit TOPUZ"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TRY"
+      }
+    }
+    </script>
+
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+    <link rel="manifest" href="manifest.json">
+    <link rel="canonical" href="https://umittopuz.com/draw.html">
+
+    <link rel="stylesheet" href="css/reset.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/draw.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Yılbaşı Kura Çekilişi</h1>
+            </div>
+        </header>
+
+        <main>
+        <section class="draw-section">
+            <!-- 1. Adım: İsim Girişi (İlk Ekran) -->
+            <div class="draw-container" id="checkUserSection">
+                <h2>Kura Çekilişine Katıl</h2>
+                <p style="text-align: center; margin-bottom: 20px; color: rgba(255,255,255,0.8);">
+                    Hoşgeldin! Devam etmek için lütfen adını gir.
+                </p>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="checkUsername">Adınız:</label>
+                        <input type="text" id="checkUsername" placeholder="Adınızı girin" required>
+                    </div>
+                    <button onclick="checkUser()" class="btn-primary">Devam Et</button>
+                    <div id="checkMessage" class="message"></div>
+                </div>
+            </div>
+
+
+
+            <div class="draw-container" id="createPasswordSection" style="display: none;">
+                <h2>Şifre Oluştur</h2>
+                <div class="user-info">
+                    <p>Hoş geldiniz, <span id="newUser"></span>!</p>
+                    <p style="font-size: 0.9em; margin-top: 10px;">İlk kez katılıyorsunuz. Lütfen bir şifre oluşturun.</p>
+                </div>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="newPassword">Şifre:</label>
+                        <input type="password" id="newPassword" placeholder="Şifrenizi oluşturun" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Şifre Tekrar:</label>
+                        <input type="password" id="confirmPassword" placeholder="Şifrenizi tekrar girin" required>
+                    </div>
+                    <button onclick="createPassword()" class="btn-primary">Şifre Oluştur ve Devam Et</button>
+                    <div id="createMessage" class="message"></div>
+                </div>
+            </div>
+
+            <div class="draw-container" id="loginSection" style="display: none;">
+                <h2>Giriş Yap</h2>
+                <div class="user-info">
+                    <p>Hoş geldiniz, <span id="returningUser"></span>!</p>
+                </div>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <label for="password">Şifreniz:</label>
+                        <input type="password" id="password" placeholder="Şifrenizi girin" required>
+                    </div>
+                    <button onclick="login()" class="btn-primary">Giriş Yap</button>
+                    <button onclick="goBack()" class="btn-secondary" style="margin-top: 10px;">Geri Dön</button>
+                    <div id="loginMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- 4. Adım: Kura Seçimi (Grid) -->
+            <div class="draw-container" id="drawBoardSection" style="display: none;">
+                <h2>Bir Kura Numarası Seç</h2>
+                <div class="user-info">
+                    <p>Merhaba, <span id="boardUser"></span>!</p>
+                    <p style="font-size: 0.9em; margin-top: 5px;">Senin numaran: <strong id="myNumberDisplay"></strong></p>
+                </div>
+                <p style="text-align: center; margin-bottom: 15px; color: rgba(255,255,255,0.7); font-size: 0.9em;">
+                    Kırmızı: Dolu | Gri: Senin Numaran | Mavi: Seçilebilir
+                </p>
+                <div class="draw-form">
+                    <div class="form-group">
+                        <div id="drawBoardButtons" class="number-buttons">
+                            <!-- JS ile doldurulacak -->
+                        </div>
+                    </div>
+                    <div id="drawBoardMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- 5. Adım: Sonuç Ekranı -->
+            <div class="draw-container" id="resultContainer" style="display: none;">
+                <div class="user-info">
+                    <p>Kura Sonucun</p>
+                </div>
+                <div class="result-section" style="display: block;">
+                    <h3>🎁 Hediye Alacağınız Kişi:</h3>
+                    <div class="result-box">
+                        <p id="viewGiftRecipient"></p>
+                    </div>
+                    <div style="background: rgba(255, 152, 0, 0.2); padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #FF9800;">
+                        <p style="color: #FFD700; margin: 0;"><i class="fa-solid fa-lock"></i> Seçiminiz değiştirilemez!</p>
+                        <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0 0; font-size: 0.9em;">Seçtiğiniz numara: <strong id="viewSelectedNumber"></strong></p>
+                    </div>
+                    <p class="info-text" style="margin-top: 15px;">Bu bilgiyi kimseyle paylaşmayın! 🎄</p>
+                </div>
+                <button onclick="logout()" class="btn-secondary" style="margin-top: 20px; width: 100%;">Çıkış Yap</button>
+            </div>
+
+
+        </section>
+        </main>
+
+        <footer style="justify-content: center; flex-direction: column; gap: 10px; text-align: center;">
+            <div class="footer">
+                <p>&copy; 2025 Çekiliş Uygulaması -by Ümit TOPUZ. Tüm Hakları Saklıdır.</p>
+            </div>
+            <div class="social">
+                <a href="https://www.linkedin.com/in/umit-topuz/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://github.com/mit45" target="_blank"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.facebook.com/umit.topuz45/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://www.instagram.com/mit45/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://x.com/mit45" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://www.youtube.com/@umittopuz" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </footer>
+
+        <!-- Admin Button -->
+        <a href="cekilis-yonetim.html" class="admin-btn" title="Admin Paneli">
+            <i class="fa-solid fa-gear"></i>
+        </a>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="js/draw.js"></script>
+</body>
+
+</html>
